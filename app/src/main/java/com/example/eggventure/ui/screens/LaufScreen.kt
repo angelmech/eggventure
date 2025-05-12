@@ -16,7 +16,9 @@ import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,7 +31,9 @@ import androidx.compose.ui.unit.sp
 import androidx.core.provider.FontsContractCompat.Columns
 import androidx.navigation.NavHostController
 import com.example.eggventure.R
+import com.example.eggventure.ui.components.TopBar
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LaufScreen(
     navController: NavHostController,
@@ -38,52 +42,61 @@ fun LaufScreen(
 ) {
     val progress = steps / stepGoal.toFloat()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFF9F0FB))
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceEvenly
-    ) {
-        // Song Title
-        Row(
-            verticalAlignment = Alignment.CenterVertically
+    Scaffold(
+        topBar = { TopBar(title = "Lauf") }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFF9F0FB))
+                .padding(
+                    top = innerPadding.calculateTopPadding(),
+                    start = 24.dp,
+                    end = 24.dp,
+                    bottom = 24.dp
+                ),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly
         ) {
-            Icon(Icons.Default.MusicNote, contentDescription = null)
-            Spacer(modifier = Modifier.width(4.dp))
-            Text("Sympathy is a Knife von Charlie xcx", fontWeight = FontWeight.Medium) // !!Example song, change later
+            // Song Title
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(Icons.Default.MusicNote, contentDescription = null)
+                Spacer(modifier = Modifier.width(4.dp))
+                Text("Sympathy is a Knife von Charlie xcx", fontWeight = FontWeight.Medium) // !!Example song, change later
+            }
+
+            // Circular Progress Bar with Egg
+            Box(
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    progress = progress,
+                    strokeWidth = 8.dp,
+                    modifier = Modifier.size(240.dp),
+                    color = Color(0xFF7B61FF)
+                )
+                Image(
+                    painter = painterResource(id = R.drawable.egg1), //
+                    contentDescription = "Egg",
+                    modifier = Modifier.size(64.dp)
+                )
+            }
+
+            // Step Count
+            Text("$steps / $stepGoal Schritten", fontSize = 16.sp)
+
+            // Start Button
+            Button(
+                onClick = {}, // !! startStepCount() should be called here
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7B61FF))
+            ) {
+                Text("Lauf Starten", color = Color.White)
+            }
+
+
         }
-
-        // Circular Progress Bar with Egg
-        Box(
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator(
-                progress = progress,
-                strokeWidth = 8.dp,
-                modifier = Modifier.size(240.dp),
-                color = Color(0xFF7B61FF)
-            )
-            Image(
-                painter = painterResource(id = R.drawable.egg1), //
-                contentDescription = "Egg",
-                modifier = Modifier.size(64.dp)
-            )
-        }
-
-        // Step Count
-        Text("$steps / $stepGoal Schritten", fontSize = 16.sp)
-
-        // Start Button
-        Button(
-            onClick = {}, // !! startStepCount() should be called here
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7B61FF))
-        ) {
-            Text("Lauf Starten", color = Color.White)
-        }
-
-
     }
 
 }
