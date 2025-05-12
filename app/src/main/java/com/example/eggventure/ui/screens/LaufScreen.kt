@@ -52,6 +52,22 @@ fun LaufScreen(
             Text("Sympathy is a Knife von Charlie xcx", fontWeight = FontWeight.Medium) // !!Example song, change later
         }
 
+        // Circular Progress Bar with Egg
+        Box(
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(
+                progress = progress,
+                strokeWidth = 8.dp,
+                modifier = Modifier.size(240.dp),
+                color = Color(0xFF7B61FF)
+            )
+            Image(
+                painter = painterResource(id = R.drawable.egg1), //
+                contentDescription = "Egg",
+                modifier = Modifier.size(64.dp)
+            )
+        }
     }
 
 }
