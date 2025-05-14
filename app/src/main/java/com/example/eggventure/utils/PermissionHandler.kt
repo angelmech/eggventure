@@ -15,10 +15,9 @@ class PermissionHandler(
         val permission = Manifest.permission.ACTIVITY_RECOGNITION
 
         if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED) {
-            // Berechtigung bereits erteilt
             onGranted(true)
         } else {
-            // Berechtigung noch nicht erteilt, also anfordern
+            // Anfrage trotzdem immer starten
             permissionLauncher.launch(permission)
         }
     }
