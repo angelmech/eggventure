@@ -1,64 +1,42 @@
 package com.example.eggventure.viewmodel
-/*
+
 import android.app.Application
-import android.content.ComponentName
 import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
-import android.os.IBinder
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
-import com.example.eggventure.viewmodel.StepCounterService
-import com.example.eggventure.viewmodel.StepCounterServiceBinder
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.eggventure.utils.StepSensorManager
+import kotlinx.coroutines.launch
 
-@HiltViewModel
-class PersistentStepCounterViewModel @Inject constructor(
-    application: Application
-) : AndroidViewModel(application) {
+class StepCounterViewModel(
+    private val context: Context
+) : ViewModel(), SensorEventListener {
 
-    private val _stepCount = MutableLiveData<Int>(0)
+    private lateinit var stepSensorManager: StepSensorManager
+    private val _stepCount = MutableLiveData(0)
     val stepCount: LiveData<Int> = _stepCount
-    private var stepCounterService: StepCounterService? = null
-    private var isServiceBound = false
 
-    private val serviceConnection = object : ServiceConnection {
-        override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            val binder = service as StepCounterServiceBinder
-            stepCounterService = binder.getService()
-            isServiceBound = true
-            stepCounterService?.steps?.observeForever { steps ->
-                _stepCount.value = steps
-            }
-        }
+    fun startStepTracking() {
+        stepSensorManager = StepSensorManager(context)
+        stepSensorManager.registerListener(this)
+    }
 
-        override fun onServiceDisconnected(className: ComponentName) {
-            stepCounterService = null
-            isServiceBound = false
+    override fun onSensorChanged(event: SensorEvent?) {
+        if (event?.sensor?.type == Sensor.TYPE_STEP_COUNTER) {
+            val steps = event.values[0].toInt()
         }
     }
 
-    fun startStepCounterService() {
-        val serviceIntent = Intent(getApplication(), StepCounterService::class.java)
-        getApplication<Application>().startForegroundService(serviceIntent)
-        Intent(getApplication(), StepCounterService::class.java).also { intent ->
-            getApplication<Application>().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
-        }
-    }
-
-    fun stopStepCounterService() {
-        if (isServiceBound) {
-            getApplication<Application>().unbindService(serviceConnection)
-            isServiceBound = false
-        }
-        val serviceIntent = Intent(getApplication(), StepCounterService::class.java)
-        getApplication<Application>().stopService(serviceIntent)
-    }
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
 
     override fun onCleared() {
-        super.onCleared()
-        stopStepCounterService()
+        stepSensorManager.unregisterListener()
     }
-}*/
+}
+
