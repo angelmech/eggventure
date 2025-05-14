@@ -2,8 +2,6 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
-    kotlin("kapt")
-    id("dagger.hilt.android.plugin")
 
 }
 
@@ -59,9 +57,6 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.compose.material:material")
 
-    implementation("com.google.dagger:hilt-android:2.51")
-    //kapt("com.google.dagger:hilt-android-compiler:2.51")
-    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.0")
@@ -72,6 +67,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.navigation:navigation-runtime-android:2.9.0")
+    implementation("androidx.compose.runtime:runtime-livedata:1.8.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")

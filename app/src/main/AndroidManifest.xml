@@ -15,7 +15,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Eggventure"
         tools:targetApi="31">
-        <service android:name=".viewmodel.StepCounterService" android:foregroundServiceType="health|physicalActivity" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

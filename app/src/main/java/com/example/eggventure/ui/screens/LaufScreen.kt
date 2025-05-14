@@ -1,5 +1,10 @@
 package com.example.eggventure.ui.screens
 
+import android.app.Application
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,26 +26,59 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.provider.FontsContractCompat.Columns
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.eggventure.R
 import com.example.eggventure.ui.components.TopBar
+import com.example.eggventure.utils.PermissionHandler
+import com.example.eggventure.viewmodel.StepCounterViewModel
+import com.example.eggventure.viewmodel.StepCounterViewModelFactory
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LaufScreen(
     navController: NavHostController,
-    steps: Int = 2002, // !!Example step count, change later
     stepGoal: Int = 5000,
 ) {
-    val progress = steps / stepGoal.toFloat()
+    val context = LocalContext.current
+    val application = context.applicationContext as Application
+
+    val stepCounterViewModel: StepCounterViewModel = viewModel(
+        factory = StepCounterViewModelFactory(context))
+    val steps = stepCounterViewModel.stepCount.observeAsState(initial = 0)
+    val progress = steps.value / stepGoal.toFloat()
+
+    //-------Permission Handling-------
+    var onPermissionGranted by remember { mutableStateOf<() -> Unit>({}) }
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            if (isGranted) {
+                Toast.makeText(context, "Berechtigung erteilt! :)", Toast.LENGTH_SHORT).show()
+                onPermissionGranted()
+            } else {
+                Toast.makeText(context, "Berechtigung verweigert! :(", Toast.LENGTH_SHORT).show()
+            }
+        }
+    )
+    val permissionHandler = remember { PermissionHandler(context, permissionLauncher) }
+    //-------------------------------------
+
 
     Scaffold(
         topBar = { TopBar(title = "Lauf") }
@@ -85,11 +123,22 @@ fun LaufScreen(
             }
 
             // Step Count
-            Text("$steps / $stepGoal Schritten", fontSize = 16.sp)
+            Text("${steps.value} / $stepGoal Schritten", fontSize = 16.sp)
 
             // Start Button
             Button(
-                onClick = {}, // !! startStepCount() should be called here
+                onClick = {
+                    onPermissionGranted = {
+                        stepCounterViewModel.startStepTracking()
+                    }
+                    Log.d("LaufScreen", "Button clicked, requesting permission")
+                    permissionHandler.checkAndRequestPermission { granted ->
+                        if (granted) {
+                            Log.d("LaufScreen", "Permission granted, starting step tracking")
+                            stepCounterViewModel.startStepTracking()
+                        }
+                    }
+                },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7B61FF))
             ) {
                 Text("Lauf Starten", color = Color.White)
