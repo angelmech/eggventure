@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -134,9 +135,11 @@ fun LaufScreen(
                             if (isTracking) {
                                 Log.d("LaufScreen", "Stopping step tracking")
                                 stepCounterViewModel.stopStepTracking()
+                                Toast.makeText(context, "Schrittzähler gestoppt", Toast.LENGTH_SHORT).show()
                             } else {
                                 Log.d("LaufScreen", "Starting step tracking")
                                 stepCounterViewModel.startStepTracking()
+                                Toast.makeText(context, "Schrittzähler gestartet", Toast.LENGTH_SHORT).show()
                             }
                         } else {
                             Toast.makeText(context, "Berechtigung benötigt", Toast.LENGTH_SHORT).show()
@@ -149,6 +152,18 @@ fun LaufScreen(
                     text = if (isTracking) "Stopp" else "Lauf Starten",
                     color = Color.White
                 )
+            }
+
+            // ✅ Show only while tracking is active
+            if (isTracking) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    onClick = {
+                        stepCounterViewModel.addFakeStep()
+                    }
+                ) {
+                    Text("Falschen Schritt hinzufügen")
+                }
             }
 
 

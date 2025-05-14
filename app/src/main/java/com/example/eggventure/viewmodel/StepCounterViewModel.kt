@@ -23,6 +23,7 @@ class StepCounterViewModel(
     val stepCount: LiveData<Int> = _stepCount
     private val _isTracking = MutableLiveData(false)
     val isTracking: LiveData<Boolean> = _isTracking
+    private var initialStepValue: Int? = null
 
 
     fun startStepTracking() {
@@ -38,9 +39,30 @@ class StepCounterViewModel(
         _isTracking.postValue(false)
     }
 
+    /**
+     * Simulate a step for testing purposes.
+     * This method should be removed in production code.
+     */
+    fun addFakeStep() {
+        val current = _stepCount.value ?: 0
+        _stepCount.postValue(current + 1)
+    }
+
+
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_STEP_COUNTER) {
-            val steps = event.values[0].toInt()
+            val totalSteps = event.values[0].toInt()
+            Log.d("StepCounter", "Sensor event received, totalSteps: $totalSteps")
+
+            if (initialStepValue == null) {
+                initialStepValue = totalSteps
+                Log.d("StepCounter", "Initial step value set to $initialStepValue")
+            }
+
+            val currentSteps = totalSteps - (initialStepValue ?: totalSteps)
+            Log.d("StepCounter", "Current steps since tracking started: $currentSteps")
+
+            _stepCount.postValue(currentSteps)
         }
     }
 
