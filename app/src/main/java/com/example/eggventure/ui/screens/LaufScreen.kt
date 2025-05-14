@@ -56,12 +56,12 @@ fun LaufScreen(
     stepGoal: Int = 5000,
 ) {
     val context = LocalContext.current
-    val application = context.applicationContext as Application
 
     val stepCounterViewModel: StepCounterViewModel = viewModel(
         factory = StepCounterViewModelFactory(context))
     val steps = stepCounterViewModel.stepCount.observeAsState(initial = 0)
     val progress = steps.value / stepGoal.toFloat()
+    val isTracking by stepCounterViewModel.isTracking.observeAsState(false)
 
     //-------Permission Handling-------
     var onPermissionGranted by remember { mutableStateOf<() -> Unit>({}) }
@@ -128,20 +128,27 @@ fun LaufScreen(
             // Start Button
             Button(
                 onClick = {
-                    onPermissionGranted = {
-                        stepCounterViewModel.startStepTracking()
-                    }
                     Log.d("LaufScreen", "Button clicked, requesting permission")
                     permissionHandler.checkAndRequestPermission { granted ->
                         if (granted) {
-                            Log.d("LaufScreen", "Permission granted, starting step tracking")
-                            stepCounterViewModel.startStepTracking()
+                            if (isTracking) {
+                                Log.d("LaufScreen", "Stopping step tracking")
+                                stepCounterViewModel.stopStepTracking()
+                            } else {
+                                Log.d("LaufScreen", "Starting step tracking")
+                                stepCounterViewModel.startStepTracking()
+                            }
+                        } else {
+                            Toast.makeText(context, "Berechtigung benötigt", Toast.LENGTH_SHORT).show()
                         }
                     }
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7B61FF))
             ) {
-                Text("Lauf Starten", color = Color.White)
+                Text(
+                    text = if (isTracking) "Stopp" else "Lauf Starten",
+                    color = Color.White
+                )
             }
 
 

@@ -21,10 +21,21 @@ class StepCounterViewModel(
     private lateinit var stepSensorManager: StepSensorManager
     private val _stepCount = MutableLiveData(0)
     val stepCount: LiveData<Int> = _stepCount
+    private val _isTracking = MutableLiveData(false)
+    val isTracking: LiveData<Boolean> = _isTracking
+
 
     fun startStepTracking() {
-        stepSensorManager = StepSensorManager(context)
-        stepSensorManager.registerListener(this)
+        if (!isTracking.value!!) {
+            stepSensorManager = StepSensorManager(context)
+            stepSensorManager.registerListener(this)
+            _isTracking.postValue(true)
+        }
+    }
+
+    fun stopStepTracking() {
+        stepSensorManager.unregisterListener()
+        _isTracking.postValue(false)
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
