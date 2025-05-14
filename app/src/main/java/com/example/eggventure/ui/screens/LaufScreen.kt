@@ -54,15 +54,16 @@ import com.example.eggventure.viewmodel.StepCounterViewModelFactory
 @Composable
 fun LaufScreen(
     navController: NavHostController,
-    stepGoal: Int = 5000,
 ) {
     val context = LocalContext.current
 
     val stepCounterViewModel: StepCounterViewModel = viewModel(
         factory = StepCounterViewModelFactory(context))
     val steps = stepCounterViewModel.stepCount.observeAsState(initial = 0)
-    val progress = steps.value / stepGoal.toFloat()
     val isTracking by stepCounterViewModel.isTracking.observeAsState(false)
+    val stepGoal by stepCounterViewModel.stepGoal.observeAsState(5000)
+    val progress = steps.value / stepGoal.toFloat()
+
 
     //-------Permission Handling-------
     var onPermissionGranted by remember { mutableStateOf<() -> Unit>({}) }
@@ -107,21 +108,32 @@ fun LaufScreen(
             }
 
             // Circular Progress Bar with Egg
-            Box(
-                contentAlignment = Alignment.Center
-            ) {
+            Box(contentAlignment = Alignment.Center) {
+                // Background thin gray circle
+                CircularProgressIndicator(
+                    progress = 1f, // full circle
+                    strokeWidth = 4.dp,
+                    modifier = Modifier.size(240.dp),
+                    color = Color.LightGray
+                )
+
+                // Foreground thick colored progress
                 CircularProgressIndicator(
                     progress = progress,
                     strokeWidth = 8.dp,
                     modifier = Modifier.size(240.dp),
                     color = Color(0xFF7B61FF)
                 )
+
+                // Center image
                 Image(
-                    painter = painterResource(id = R.drawable.egg1), //
+                    painter = painterResource(id = R.drawable.egg1),
                     contentDescription = "Egg",
                     modifier = Modifier.size(64.dp)
                 )
             }
+
+
 
             // Step Count
             Text("${steps.value} / $stepGoal Schritten", fontSize = 16.sp)
@@ -154,7 +166,7 @@ fun LaufScreen(
                 )
             }
 
-            // ✅ Show only while tracking is active
+
             if (isTracking) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(

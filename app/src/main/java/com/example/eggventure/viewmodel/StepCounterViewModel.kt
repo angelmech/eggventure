@@ -24,6 +24,8 @@ class StepCounterViewModel(
     private val _isTracking = MutableLiveData(false)
     val isTracking: LiveData<Boolean> = _isTracking
     private var initialStepValue: Int? = null
+    val stepGoal = MutableLiveData<Int>(5000)
+
 
 
     fun startStepTracking() {
@@ -45,7 +47,7 @@ class StepCounterViewModel(
      */
     fun addFakeStep() {
         val current = _stepCount.value ?: 0
-        _stepCount.postValue(current + 1)
+        _stepCount.postValue(current + 20)
     }
 
 
