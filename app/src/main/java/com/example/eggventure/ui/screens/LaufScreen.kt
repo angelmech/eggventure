@@ -1,6 +1,5 @@
 package com.example.eggventure.ui.screens
 
-import android.app.Application
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -40,12 +39,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.provider.FontsContractCompat.Columns
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.eggventure.R
 import com.example.eggventure.ui.components.TopBar
 import com.example.eggventure.utils.PermissionHandler
+import com.example.eggventure.utils.PermissionHandlerImpl
 import com.example.eggventure.viewmodel.StepCounterViewModel
 import com.example.eggventure.viewmodel.StepCounterViewModelFactory
 
@@ -56,9 +55,9 @@ fun LaufScreen(
     navController: NavHostController,
 ) {
     val context = LocalContext.current
-
     val stepCounterViewModel: StepCounterViewModel = viewModel(
-        factory = StepCounterViewModelFactory(context))
+        factory = StepCounterViewModelFactory(context)
+    )
     val steps = stepCounterViewModel.stepCount.observeAsState(initial = 0)
     val isTracking by stepCounterViewModel.isTracking.observeAsState(false)
     val stepGoal by stepCounterViewModel.stepGoal.observeAsState(5000)
@@ -78,7 +77,7 @@ fun LaufScreen(
             }
         }
     )
-    val permissionHandler = remember { PermissionHandler(context, permissionLauncher) }
+    val permissionHandler: PermissionHandler = remember { PermissionHandlerImpl(context, permissionLauncher) }
     //-------------------------------------
 
 
