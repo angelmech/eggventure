@@ -4,18 +4,18 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.eggventure.model.dao.EggDao
+import com.example.eggventure.model.dao.HatchProgressDao
 import com.example.eggventure.model.dao.RunDao
-import com.example.eggventure.model.entity.EggProgress
+import com.example.eggventure.model.entity.HatchProgressEntity
 import com.example.eggventure.model.entity.RunEntity
 
 @Database(
-    entities = [RunEntity::class, EggProgress::class],
+    entities = [RunEntity::class, HatchProgressEntity::class],
     version = 1
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun runDao(): RunDao
-    abstract fun eggDao(): EggDao
+    abstract fun eggDao(): HatchProgressDao
 
     companion object {
         @Volatile private var INSTANCE: AppDatabase? = null

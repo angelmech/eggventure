@@ -7,7 +7,8 @@ import androidx.room.PrimaryKey
 data class RunEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val steps: Int, // alle Schritte des Laufs
-    val durationMillis: Long, // Dauer in ms, später in hh:mm:ss umwandeln
-    val date: Long = System.currentTimeMillis()
-    // val avg_speed incoming next patch (geschwindigkeit)
+    val duration: Long, // Dauer in ms, später in hh:mm:ss umwandeln
+    val date: Long = System.currentTimeMillis(),
+    val averageSpeed: Float?,  // km/h
+    val distanceMeters: Float?, // geschätzte Distanz in km
 )
