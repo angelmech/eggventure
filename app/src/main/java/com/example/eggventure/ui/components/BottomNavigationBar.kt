@@ -6,9 +6,9 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.eggventure.ui.navigation.BottomNavItem
 
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {

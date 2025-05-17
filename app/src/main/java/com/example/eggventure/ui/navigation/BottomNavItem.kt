@@ -1,4 +1,4 @@
-package com.example.eggventure.ui.components
+package com.example.eggventure.ui.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
