@@ -4,8 +4,12 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke // For BorderStroke
+import androidx.compose.ui.unit.dp // For dp unit
+import androidx.compose.ui.graphics.Color // For Color
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,16 +38,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.draw.alpha
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.eggventure.R
 import com.example.eggventure.ui.components.TopBar
+import com.example.eggventure.ui.theme.Purple40
+import com.example.eggventure.ui.theme.Purple80
 import com.example.eggventure.utils.PermissionHandler
 import com.example.eggventure.utils.PermissionHandlerImpl
 import com.example.eggventure.viewmodel.StepCounter
@@ -114,7 +119,10 @@ fun LaufScreen(
             ) {
                 Icon(Icons.Default.MusicNote, contentDescription = null)
                 Spacer(modifier = Modifier.width(4.dp))
-                Text("Sympathy is a Knife von Charlie xcx", fontWeight = FontWeight.Medium) // !!Example song, change later
+                Text(
+                    "Sympathy is a Knife von Charlie xcx",
+                    fontWeight = FontWeight.Medium,
+                    color=Color.Black)
             }
 
             // Circular Progress Bar with Egg
@@ -139,14 +147,17 @@ fun LaufScreen(
                 Image(
                     painter = painterResource(id = R.drawable.egg1),
                     contentDescription = "Egg",
-                    modifier = Modifier.size(64.dp)
+                    modifier = Modifier.size(96.dp)
                 )
             }
 
 
 
             // Step Count
-            Text("$steps / $stepGoal Schritten", fontSize = 16.sp)
+            Text(
+                "$steps / $stepGoal Schritten",
+                fontSize = 16.sp,
+                color=Color.Black)
 
             // Start Button
             Button(
@@ -176,29 +187,33 @@ fun LaufScreen(
                         }
                     }
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7B61FF))
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7B61FF)),
+                modifier = Modifier.size(200.dp, 60.dp),
+                border = BorderStroke(2.dp, Color(0xFF000000))
             ) {
                 Text(
                     text = if (isTracking) "Stopp" else "Lauf Starten",
-                    color = Color.White
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold ,
+                    fontSize = 18.sp,
                 )
             }
 
-            if (isTracking) {
-                Spacer(modifier = Modifier.height(32.dp))
-                Button(
-                    onClick = {
-                        stepCounter.addFakeStep()
-                        Log.d("LaufScreen", "Fake step added")
-                    }
-                ) {
-                    Text("Schritte hinzufügen")
-                }
+            Button(
+                onClick = {
+                    // The onClick logic only triggers if the button is enabled anyway
+                    stepCounter.addFakeStep()
+                    Log.d("LaufScreen", "Fake step added")
+                },
+                enabled = isTracking, // Button is enabled (clickable) only when isTracking is true
+                modifier = Modifier
+                    .alpha(if (isTracking) 1f else 0f)
+            ) {
+                Text("Schritte hinzufügen")
             }
 
             eggHatched?.let {
                 if (it) {
-                    // Show a message or perform an action when the egg is hatched
                     Toast.makeText(context, "Ei geschlüpft!", Toast.LENGTH_SHORT).show()
                     // show screen with hatched creature and "fertig" button
                 }
