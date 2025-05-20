@@ -23,7 +23,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,14 +43,12 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.eggventure.R
-import com.example.eggventure.model.AppDatabase
-import com.example.eggventure.model.repository.HatchProgressRepository
-import com.example.eggventure.model.repository.RunRepository
 import com.example.eggventure.ui.components.TopBar
 import com.example.eggventure.utils.PermissionHandler
 import com.example.eggventure.utils.PermissionHandlerImpl
-import com.example.eggventure.viewmodel.StepCounterViewModel
-import com.example.eggventure.viewmodel.StepCounterViewModelFactory
+import com.example.eggventure.viewmodel.StepCounter
+import com.example.eggventure.viewmodel.StepCounterImpl
+import com.example.eggventure.viewmodel.StepCounterFactory
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,22 +56,15 @@ import com.example.eggventure.viewmodel.StepCounterViewModelFactory
 fun LaufScreen(
     navController: NavHostController,
 ) {
-    //-------View Setup-------
-    val context = LocalContext.current
-    //-------Model Setup-------
-    val db = AppDatabase.getDatabase(context)
-    val hatchProgressRepository = remember { HatchProgressRepository(db.hatchProgressDao()) }
-    val runRepository = remember { RunRepository(db.runDao()) }
 
-    //-------ViewModel Setup-------
-    val stepCounterViewModel: StepCounterViewModel = viewModel(
-        factory = StepCounterViewModelFactory(context, hatchProgressRepository, runRepository)
-    )
+    val context = LocalContext.current
+    val stepCounterViewModel: StepCounterImpl = viewModel(factory = StepCounterFactory(context))
+    val stepCounter: StepCounter = stepCounterViewModel
 
     //-------Observing LiveData-------
-    val steps by stepCounterViewModel.stepCount.observeAsState(initial = 0)
-    val isTracking by stepCounterViewModel.isTracking.observeAsState(false)
-    val eggHatched by stepCounterViewModel.eggHatched.observeAsState()
+    val steps by stepCounter.stepCount.observeAsState(initial = 0)
+    val isTracking by stepCounter.isTracking.observeAsState(false)
+    val eggHatched by stepCounter.eggHatched.observeAsState()
 
     // Manual hatchGoal because you store it as a var, not LiveData
     val stepGoal = 5000 // or refactor ViewModel to expose this via LiveData if needed
@@ -99,7 +89,7 @@ fun LaufScreen(
 
     // on screen load
     LaunchedEffect(Unit) {
-        stepCounterViewModel.initProgress()
+        stepCounter.initProgress()
     }
 
     Scaffold(
@@ -166,12 +156,20 @@ fun LaufScreen(
                         if (granted) {
                             if (isTracking) {
                                 Log.d("LaufScreen", "Stopping step tracking")
-                                stepCounterViewModel.stopStepTracking()
-                                Toast.makeText(context, "Schrittzähler gestoppt", Toast.LENGTH_SHORT).show()
+                                stepCounter.stopTracking()
+                                Toast.makeText(
+                                    context,
+                                    "Schrittzähler gestoppt",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             } else {
                                 Log.d("LaufScreen", "Starting step tracking")
-                                stepCounterViewModel.startStepTracking()
-                                Toast.makeText(context, "Schrittzähler gestartet", Toast.LENGTH_SHORT).show()
+                                stepCounter.startTracking()
+                                Toast.makeText(
+                                    context,
+                                    "Schrittzähler gestartet",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         } else {
                             Toast.makeText(context, "Berechtigung benötigt", Toast.LENGTH_SHORT).show()
@@ -190,7 +188,7 @@ fun LaufScreen(
                 Spacer(modifier = Modifier.height(32.dp))
                 Button(
                     onClick = {
-                        stepCounterViewModel.addFakeStep()
+                        stepCounter.addFakeStep()
                         Log.d("LaufScreen", "Fake step added")
                     }
                 ) {
