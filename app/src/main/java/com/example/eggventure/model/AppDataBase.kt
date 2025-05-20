@@ -13,7 +13,7 @@ import com.example.eggventure.model.entity.RunEntity
 
 @Database(
     entities = [RunEntity::class, HatchProgressEntity::class, EggEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false // true if you want to export to JSON file
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -24,7 +24,7 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
         @Volatile private var INSTANCE: AppDatabase? = null
 
-        fun getInstance(context: Context): AppDatabase {
+        fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 Room.databaseBuilder(
                     context.applicationContext,

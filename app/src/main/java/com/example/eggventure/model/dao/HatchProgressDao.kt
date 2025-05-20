@@ -11,8 +11,8 @@ interface HatchProgressDao {
     suspend fun insertProgress(progress: HatchProgressEntity)
 
     // get the steps accumulated till hatch
-    @Query("SELECT stepsAccumulated FROM hatch_progress ORDER BY id DESC LIMIT 1")
-    suspend fun getStepsAccumulated(): Int?
+    @Query("SELECT hatchProgressSteps FROM hatch_progress ORDER BY id DESC LIMIT 1")
+    suspend fun getHatchProgressSteps(): Int?
 
     // get the hatch goal
     @Query("SELECT hatchGoal FROM hatch_progress ORDER BY id DESC LIMIT 1")
@@ -23,7 +23,7 @@ interface HatchProgressDao {
     suspend fun getLastHatchProgress(): HatchProgressEntity?
 
     // update the hatch progress
-    @Query("UPDATE hatch_progress SET stepsAccumulated = :stepsAccumulated WHERE id = :id")
+    @Query("UPDATE hatch_progress SET hatchProgressSteps = :stepsAccumulated WHERE id = :id")
     suspend fun updateHatchProgress(id: Int, stepsAccumulated: Int)
 
 

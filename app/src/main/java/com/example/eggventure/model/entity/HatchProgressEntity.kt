@@ -10,6 +10,6 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "hatch_progress")
 data class HatchProgressEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val stepsAccumulated: Int,
+    val hatchProgressSteps: Int, // steps accumulated till hatch
     val hatchGoal: Int = 5000, // default hatch goal, can be changed in the future
 )
