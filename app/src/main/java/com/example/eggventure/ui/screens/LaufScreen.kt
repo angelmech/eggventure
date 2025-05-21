@@ -9,14 +9,12 @@ import androidx.compose.ui.unit.dp // For dp unit
 import androidx.compose.ui.graphics.Color // For Color
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -47,11 +45,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.eggventure.R
 import com.example.eggventure.ui.components.TopBar
-import com.example.eggventure.ui.theme.Purple40
-import com.example.eggventure.ui.theme.Purple80
 import com.example.eggventure.utils.PermissionHandler
 import com.example.eggventure.utils.PermissionHandlerImpl
-import com.example.eggventure.viewmodel.StepCounter
 import com.example.eggventure.viewmodel.StepCounterImpl
 import com.example.eggventure.viewmodel.StepCounterFactory
 
@@ -63,8 +58,7 @@ fun LaufScreen(
 ) {
 
     val context = LocalContext.current
-    val stepCounterViewModel: StepCounterImpl = viewModel(factory = StepCounterFactory(context))
-    val stepCounter: StepCounter = stepCounterViewModel
+    val stepCounter: StepCounterImpl = viewModel(factory = StepCounterFactory(context))
 
     //-------Observing LiveData-------
     val steps by stepCounter.stepCount.observeAsState(initial = 0)
@@ -117,7 +111,10 @@ fun LaufScreen(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(Icons.Default.MusicNote, contentDescription = null)
+                Icon(
+                    Icons.Default.MusicNote,
+                    contentDescription = null,
+                    tint = Color.Black,)
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     "Sympathy is a Knife von Charlie xcx",
