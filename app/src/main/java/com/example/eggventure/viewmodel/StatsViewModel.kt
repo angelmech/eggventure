@@ -42,4 +42,22 @@ class StatsViewModel(private val runRepository: RunRepository) : ViewModel() {
             _weeklyAverageDistance.value = runRepository.getWeeklyAverageDistance(weekAgo)
         }
     }
+
+    // Formatiert die Dauer zu hh:mm:ss
+    fun formatDuration(durationMillis: Long): String {
+        val hours = TimeUnit.MILLISECONDS.toHours(durationMillis)
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(durationMillis) % 60
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(durationMillis) % 60
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
+    }
+
+    // Formatiert die Distanz zu km (mit 2 Nachkommastellen)
+    fun formatDistanceKm(distanceMeters: Float?): String {
+        return distanceMeters?.let { String.format("%.2f km", it / 1000f) } ?: "N/A"
+    }
+
+    // Formatiert die Durchschnittsgeschwindigkeit zu km/h
+    fun formatAverageSpeed(averageSpeed: Float?): String {
+        return averageSpeed?.let { String.format("%.2f km/h", it) } ?: "N/A"
+    }
 }
