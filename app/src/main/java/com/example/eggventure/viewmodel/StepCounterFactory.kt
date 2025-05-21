@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.eggventure.model.AppDatabase
-import com.example.eggventure.model.repository.HatchProgressRepository
-import com.example.eggventure.model.repository.RunRepository
+import com.example.eggventure.model.hatchprogress.HatchProgressRepository
+import com.example.eggventure.model.run.RunRepository
 import com.example.eggventure.utils.StepSensorManagerImpl
 
 /**

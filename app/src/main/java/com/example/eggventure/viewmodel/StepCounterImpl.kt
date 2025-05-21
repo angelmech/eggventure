@@ -1,7 +1,7 @@
 package com.example.eggventure.viewmodel
 
 import androidx.lifecycle.*
-import com.example.eggventure.model.repository.HatchProgressRepository
+import com.example.eggventure.model.hatchprogress.HatchProgressRepository
 import kotlinx.coroutines.launch
 
 class StepCounterImpl(

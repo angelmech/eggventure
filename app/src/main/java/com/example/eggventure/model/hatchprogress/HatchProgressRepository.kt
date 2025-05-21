@@ -1,8 +1,6 @@
-package com.example.eggventure.model.repository
+package com.example.eggventure.model.hatchprogress
 
 import android.util.Log
-import com.example.eggventure.model.dao.HatchProgressDao
-import com.example.eggventure.model.entity.HatchProgressEntity
 
 class HatchProgressRepository(private val hatchProgressDao: HatchProgressDao) {
 

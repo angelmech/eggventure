@@ -1,6 +1,6 @@
 package com.example.eggventure.viewmodel
 
-import com.example.eggventure.model.repository.HatchProgressRepository
+import com.example.eggventure.model.hatchprogress.HatchProgressRepository
 
 class EggHatchEvent(
     private val hatchProgressRepository: HatchProgressRepository

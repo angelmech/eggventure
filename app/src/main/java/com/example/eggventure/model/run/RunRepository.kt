@@ -1,8 +1,6 @@
-package com.example.eggventure.model.repository
+package com.example.eggventure.model.run
 
 import android.util.Log
-import com.example.eggventure.model.dao.RunDao
-import com.example.eggventure.model.entity.RunEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
