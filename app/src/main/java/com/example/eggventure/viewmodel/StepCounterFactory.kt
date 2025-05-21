@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.eggventure.model.AppDatabase
 import com.example.eggventure.model.hatchprogress.HatchProgressRepository
 import com.example.eggventure.model.run.RunRepository
+import com.example.eggventure.model.run.RunRepositoryImpl
 import com.example.eggventure.utils.StepSensorManagerImpl
 
 /**
@@ -22,7 +23,7 @@ class StepCounterFactory(
         val db = AppDatabase.getDatabase(context)
 
         val hatchProgressRepository = HatchProgressRepository(db.hatchProgressDao())
-        val runRepository = RunRepository(db.runDao())
+        val runRepository : RunRepository = RunRepositoryImpl(db.runDao())
 
         val eggHatchEvent = EggHatchEvent(hatchProgressRepository)
         val runPersistence = RunPersistence(runRepository)
