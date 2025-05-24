@@ -8,13 +8,15 @@ import androidx.lifecycle.*
 import com.example.eggventure.model.hatchprogress.HatchProgressEntity
 import com.example.eggventure.model.hatchprogress.HatchProgressRepository
 import com.example.eggventure.utils.sensorutils.StepSensorManager
+import com.example.eggventure.viewmodel.creaturelogic.CreatureLogicInterface
+import com.example.eggventure.viewmodel.creaturelogic.EggHatchEvent
 import kotlinx.coroutines.launch
 
 class StepCounter(
     private val stepSensorManager: StepSensorManager,
-    private val hatchEvent: EggHatchEvent,
     private val runPersistence: RunPersistence,
-    private val hatchProgressRepository: HatchProgressRepository
+    private val hatchProgressRepository: HatchProgressRepository,
+    private val creatureLogic: CreatureLogicInterface
 ) : ViewModel(), SensorEventListener, StepCounterInterface {
 
     private val _stepCount = MutableLiveData(0)
@@ -81,7 +83,6 @@ class StepCounter(
         hatchProgressSteps += fakeSteps
 
         if (hatchProgressSteps >= hatchGoal) {
-            //val stepsAtHatch = (initialTotalSteps ?: 0) + runSteps + fakeStepOffset
             val stepsAtHatch = initialTotalSteps?.plus(runSteps) ?: runSteps
             startEggHatchEvent(stepsAtHatch)
         } else {
@@ -94,11 +95,15 @@ class StepCounter(
         }
     }
 
-
+    /* * Starts the egg hatch event if the progress reaches the goal.
+     * This function is called when the step count reaches or exceeds the hatch goal.
+     */
     private fun startEggHatchEvent(totalSteps: Int) {
         viewModelScope.launch {
             hatchId?.let { id ->
-                val hatched = hatchEvent.processHatch(id, hatchProgressSteps, hatchGoal)
+                //val hatched = hatchEvent.processHatch(id, hatchProgressSteps, hatchGoal)
+                // call the creatureLogic viewmodel to handle the egg hatch logic
+                val hatched = creatureLogic.hatchCreature(id, totalSteps, hatchProgressSteps, hatchGoal)
                 if (hatched) {
                     hatchProgressSteps = 0
                     fakeStepOffset = 0
@@ -111,7 +116,9 @@ class StepCounter(
         }
     }
 
-
+    /**
+     * Updates the step count and checks if the hatch goal is reached.
+     */
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_STEP_COUNTER) {
             val totalSteps = event.values[0].toInt()

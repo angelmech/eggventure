@@ -8,41 +8,22 @@ import kotlinx.coroutines.flow.StateFlow
  */
 interface CreatureLogicInterface {
 
-    /**
-     * Retrieves the list of owned creatures.
-     * @return A StateFlow emitting the list of owned CreatureEntity objects.
-     */
-    val ownedCreatures: StateFlow<List<CreatureEntity>>
-
-    /**
-     * Adds a creature to the collection of owned creatures.
-     * @param creature The CreatureEntity to add to the collection.
-     */
-    fun addCreatureToCollection(creature: CreatureEntity)
-
-    /**
-     * Retrieves a creature from the collection by its unique identifier.
-     * @param creatureId The ID of the creature to retrieve.
-     * @return The CreatureEntity if found, otherwise null.
-     */
-    fun getCreatureById(creatureId: Int): CreatureEntity?
-
-    /**
-     * Unlocks a creature.
-     * @param creatureId The ID of the creature to unlock.
-     */
-    fun unlockCreature(creatureId: Int)
-
-    /**
-     * Checks if a creature is already owned by the user.
-     * @param creatureId The ID of the creature to check.
-     * @return True if the creature is owned, false otherwise.
-     */
-    fun hasCreature(creatureId: Int): Boolean
 
     /**
      * sorts list of owned creatures sorted by rarity.
      */
     fun toggleSortByRarity()
 
+
+    /**
+     * Initiates the hatching process for a creature.
+     *
+     * @param creatureId The ID of the creature to hatch.
+     * @param hatchProgressSteps The number of steps required to complete the hatching process.
+     * @param hatchGoal The goal for the hatching process, typically the number of steps needed to hatch the creature.
+     * @param totalSteps The total number of steps taken by the user, which may be used to track progress.
+     *
+     * @return True if the hatching process was successfully initiated, false otherwise.
+     */
+    suspend fun hatchCreature(creatureId: Int, totalSteps: Int, hatchProgressSteps: Int, hatchGoal: Int): Boolean
 }
