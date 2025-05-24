@@ -8,6 +8,7 @@ import com.example.eggventure.model.hatchprogress.HatchProgressRepository
 import com.example.eggventure.model.hatchprogress.HatchProgressRepositoryImpl
 import com.example.eggventure.model.run.RunRepository
 import com.example.eggventure.model.run.RunRepositoryImpl
+import com.example.eggventure.utils.sensorutils.StepSensorManager
 import com.example.eggventure.utils.sensorutils.StepSensorManagerImpl
 
 /**
@@ -28,11 +29,11 @@ class StepCounterFactory(
 
         val eggHatchEvent = EggHatchEvent(hatchProgressRepository)
         val runPersistence = RunPersistence(runRepository)
-        val stepTrackingService = StepTrackingService(StepSensorManagerImpl(context))
+        val stepSensorManager : StepSensorManager = StepSensorManagerImpl(context)
 
         @Suppress("UNCHECKED_CAST")
         return StepCounter(
-            stepTrackingService,
+            stepSensorManager,
             eggHatchEvent,
             runPersistence,
             hatchProgressRepository

@@ -44,5 +44,5 @@ interface StepCounterInterface {
      * Adds a specified number of fake steps to the current step count.
      * @param fakeSteps The number of fake steps to add.
      */
-    fun addFakeStep(fakeSteps: Int = 123)
+    fun addFakeStep(fakeSteps: Int = 523)
 }

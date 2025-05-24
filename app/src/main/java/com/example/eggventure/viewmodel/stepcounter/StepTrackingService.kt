@@ -10,24 +10,34 @@ class StepTrackingService(
 ) : SensorEventListener {
 
     private var listener: ((Int) -> Unit)? = null
-    private var initialSteps: Int? = null
+    private var lastTotalSteps: Int? = null
 
     fun start(onStep: (Int) -> Unit) {
         listener = onStep
+        lastTotalSteps = null
         stepSensorManager.registerListener(this)
     }
 
     fun stop() {
         stepSensorManager.unregisterListener()
         listener = null
+        lastTotalSteps = null
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_STEP_COUNTER) {
-            val totalSteps = event.values[0].toInt()
-            if (initialSteps == null) initialSteps = totalSteps
-            val deltaSteps = totalSteps - (initialSteps ?: totalSteps)
-            listener?.invoke(deltaSteps)
+            val currentTotalSteps = event.values[0].toInt()
+
+            if (lastTotalSteps == null) {
+                lastTotalSteps = currentTotalSteps
+                return
+            }
+
+            val delta = currentTotalSteps - lastTotalSteps!!
+            if (delta > 0) {
+                listener?.invoke(delta)
+                lastTotalSteps = currentTotalSteps
+            }
         }
     }
 
