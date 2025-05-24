@@ -22,53 +22,39 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.eggventure.R
+import com.example.eggventure.model.creature.CreatureDatabase
+import com.example.eggventure.ui.components.CreatureCard
 import com.example.eggventure.ui.components.TopBar
+import androidx.compose.foundation.lazy.grid.items
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.eggventure.model.creature.CreatureDataInterface
+import com.example.eggventure.viewmodel.stepcounter.StepCounter
+import com.example.eggventure.viewmodel.stepcounter.StepCounterFactory
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SammlungScreen(navController: NavHostController) {
 
-    val eggCreatures = listOf(
-        "Egg A", "Egg B", "Egg C", "Egg D", "Egg E", "Egg F"
-    ) // !! example data, change later to pics or sum shit
+    val creatureData: CreatureDataInterface = CreatureDatabase
+    val creatures = creatureData.getAllCreatures()
+
 
     Scaffold(
         topBar = { TopBar(title = "Sammlung") }
     ) { innerPadding ->
-        Column(
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
             modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    top = innerPadding.calculateTopPadding(),
-                    start = 16.dp,
-                    end = 16.dp
-                )
+                .padding(innerPadding)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(eggCreatures.size) { index ->
-                    Box(
-                        modifier = Modifier
-                            .aspectRatio(1f)
-                            .background(Color(0xFFEDE7F6)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(text = eggCreatures[index], color = Color.DarkGray) // this da placeholder for now
-
-                        //-----IMPORTANT!!!! FOR LATER USE---!----!---!--!---
-                        /*Image(
-                            painter = painterResource(id = imageRes),
-                            contentDescription = "Ei",
-                            modifier = Modifier.size(64.dp)
-                        )*/
-                    }
-                }
+            items(creatures) { creature ->
+                CreatureCard(creature = creature)
             }
         }
     }
 }
+
