@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
  * Interface for managing the logic related to creatures in the application.
  */
 interface CreatureLogicInterface {
+
     /**
      * Retrieves the list of owned creatures.
      * @return A StateFlow emitting the list of owned CreatureEntity objects.
@@ -38,4 +39,10 @@ interface CreatureLogicInterface {
      * @return True if the creature is owned, false otherwise.
      */
     fun hasCreature(creatureId: Int): Boolean
+
+    /**
+     * sorts list of owned creatures sorted by rarity.
+     */
+    fun toggleSortByRarity()
+
 }
