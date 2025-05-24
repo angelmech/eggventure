@@ -29,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -41,7 +42,8 @@ import com.example.eggventure.viewmodel.creaturelogic.CreatureLogicFactory
 @Composable
 fun SammlungScreen(navController: NavHostController) {
 
-    val creatureLogic: CreatureLogic = viewModel(factory = CreatureLogicFactory())
+    val context = LocalContext.current
+    val creatureLogic: CreatureLogic = viewModel(factory = CreatureLogicFactory(context))
     val creatures by creatureLogic.creatures.collectAsState()
     var expanded by remember { mutableStateOf(false) }
 
