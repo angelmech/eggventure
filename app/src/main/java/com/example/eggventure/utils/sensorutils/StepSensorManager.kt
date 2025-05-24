@@ -1,5 +1,5 @@
 // StepSensorInterface.kt
-package com.example.eggventure.utils
+package com.example.eggventure.utils.sensorutils
 
 import android.hardware.SensorEventListener
 

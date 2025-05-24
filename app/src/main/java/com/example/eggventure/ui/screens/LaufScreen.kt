@@ -6,25 +6,20 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke // For BorderStroke
 import androidx.compose.ui.unit.dp // For dp unit
-import androidx.compose.ui.graphics.Color // For Color
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,10 +40,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.eggventure.R
 import com.example.eggventure.ui.components.TopBar
-import com.example.eggventure.utils.PermissionHandler
-import com.example.eggventure.utils.PermissionHandlerImpl
-import com.example.eggventure.viewmodel.StepCounterImpl
-import com.example.eggventure.viewmodel.StepCounterFactory
+import com.example.eggventure.utils.permissionutils.PermissionHandler
+import com.example.eggventure.utils.permissionutils.PermissionHandlerImpl
+import com.example.eggventure.viewmodel.stepcounter.StepCounter
+import com.example.eggventure.viewmodel.stepcounter.StepCounterFactory
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,7 +53,7 @@ fun LaufScreen(
 ) {
 
     val context = LocalContext.current
-    val stepCounter: StepCounterImpl = viewModel(factory = StepCounterFactory(context))
+    val stepCounter: StepCounter = viewModel(factory = StepCounterFactory(context))
 
     //-------Observing LiveData-------
     val steps by stepCounter.stepCount.observeAsState(initial = 0)
@@ -97,7 +92,7 @@ fun LaufScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFF9F0FB))
+                .background(MaterialTheme.colorScheme.background)
                 .padding(
                     top = innerPadding.calculateTopPadding(),
                     start = 24.dp,
@@ -111,7 +106,9 @@ fun LaufScreen(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
+                // maybe info button that opens a dialog with hatch info
+
+                /*Icon(
                     Icons.Default.MusicNote,
                     contentDescription = null,
                     tint = Color.Black,)
@@ -119,7 +116,7 @@ fun LaufScreen(
                 Text(
                     "Sympathy is a Knife von Charlie xcx",
                     fontWeight = FontWeight.Medium,
-                    color=Color.Black)
+                    color=Color.Black)*/
             }
 
             // Circular Progress Bar with Egg
@@ -129,7 +126,7 @@ fun LaufScreen(
                     progress = 1f, // full circle
                     strokeWidth = 4.dp,
                     modifier = Modifier.size(240.dp),
-                    color = Color.LightGray
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 // Foreground thick colored progress
@@ -137,7 +134,7 @@ fun LaufScreen(
                     progress = progress,
                     strokeWidth = 8.dp,
                     modifier = Modifier.size(240.dp),
-                    color = Color(0xFF7B61FF)
+                    color = MaterialTheme.colorScheme.primary
                 )
 
                 // Center image
@@ -154,7 +151,7 @@ fun LaufScreen(
             Text(
                 "$steps / $stepGoal Schritten",
                 fontSize = 16.sp,
-                color=Color.Black)
+                color=MaterialTheme.colorScheme.onSurface)
 
             // Start Button
             Button(
@@ -184,13 +181,13 @@ fun LaufScreen(
                         }
                     }
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7B61FF)),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 modifier = Modifier.size(200.dp, 60.dp),
-                border = BorderStroke(2.dp, Color(0xFF000000))
+                border = BorderStroke(2.dp, MaterialTheme.colorScheme.onSurface)
             ) {
                 Text(
                     text = if (isTracking) "Stopp" else "Lauf Starten",
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Bold ,
                     fontSize = 18.sp,
                 )

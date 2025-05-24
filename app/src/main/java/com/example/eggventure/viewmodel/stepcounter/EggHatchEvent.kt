@@ -1,4 +1,4 @@
-package com.example.eggventure.viewmodel
+package com.example.eggventure.viewmodel.stepcounter
 
 import com.example.eggventure.model.hatchprogress.HatchProgressRepository
 

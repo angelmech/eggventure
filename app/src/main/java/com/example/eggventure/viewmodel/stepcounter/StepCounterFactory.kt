@@ -1,4 +1,4 @@
-package com.example.eggventure.viewmodel
+package com.example.eggventure.viewmodel.stepcounter
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
@@ -8,16 +8,16 @@ import com.example.eggventure.model.hatchprogress.HatchProgressRepository
 import com.example.eggventure.model.hatchprogress.HatchProgressRepositoryImpl
 import com.example.eggventure.model.run.RunRepository
 import com.example.eggventure.model.run.RunRepositoryImpl
-import com.example.eggventure.utils.StepSensorManagerImpl
+import com.example.eggventure.utils.sensorutils.StepSensorManagerImpl
 
 /**
- * Factory class for creating instances of [StepCounterImpl].
+ * Factory class for creating instances of [StepCounter].
  */
 class StepCounterFactory(
     private val context: Context
 ) : ViewModelProvider.Factory {
     /**
-     * Creates a new instance of [StepCounterImpl] with the required dependencies.
+     * Creates a new instance of [StepCounter] with the required dependencies.
      *
      */
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -31,7 +31,7 @@ class StepCounterFactory(
         val stepTrackingService = StepTrackingService(StepSensorManagerImpl(context))
 
         @Suppress("UNCHECKED_CAST")
-        return StepCounterImpl(
+        return StepCounter(
             stepTrackingService,
             eggHatchEvent,
             runPersistence,

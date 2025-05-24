@@ -1,4 +1,4 @@
-package com.example.eggventure.utils
+package com.example.eggventure.utils.permissionutils
 
 import android.Manifest
 import android.content.Context

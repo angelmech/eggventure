@@ -1,4 +1,4 @@
-package com.example.eggventure.utils
+package com.example.eggventure.utils.permissionutils
 
 /**
  * Interface for handling permissions in the app.

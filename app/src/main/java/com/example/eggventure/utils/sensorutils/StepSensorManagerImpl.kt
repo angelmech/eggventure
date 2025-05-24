@@ -1,4 +1,4 @@
-package com.example.eggventure.utils
+package com.example.eggventure.utils.sensorutils
 
 import android.content.Context
 import android.hardware.Sensor

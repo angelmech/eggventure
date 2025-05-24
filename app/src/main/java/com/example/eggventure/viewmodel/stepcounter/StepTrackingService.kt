@@ -1,9 +1,9 @@
-package com.example.eggventure.viewmodel
+package com.example.eggventure.viewmodel.stepcounter
 
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
-import com.example.eggventure.utils.StepSensorManager
+import com.example.eggventure.utils.sensorutils.StepSensorManager
 
 class StepTrackingService(
     private val stepSensorManager: StepSensorManager

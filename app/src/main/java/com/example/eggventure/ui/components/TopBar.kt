@@ -10,8 +10,8 @@ fun TopBar(title: String) {
     TopAppBar(
         title = { Text(title) },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = Color(0xFF7B61FF),
-            titleContentColor = Color.White
+            containerColor = MaterialTheme.colorScheme.primary,
+            titleContentColor = MaterialTheme.colorScheme.onSurface
         )
 
     )

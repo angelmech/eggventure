@@ -1,8 +1,7 @@
-package com.example.eggventure.viewmodel
+package com.example.eggventure.viewmodel.stepcounter
 
 import com.example.eggventure.model.run.RunEntity
 import com.example.eggventure.model.run.RunRepository
-import com.example.eggventure.model.run.RunRepositoryImpl
 
 class RunPersistence(
     private val runRepository: RunRepository
