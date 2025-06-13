@@ -9,27 +9,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.example.eggventure.model.creature.Creature
-import com.example.eggventure.model.creature.Rarity
-import com.example.eggventure.ui.theme.RarityColors
+import com.example.eggventure.model.creature.CreatureEntity
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
-fun CreatureCard(creature: Creature) {
+fun CreatureCard(creature: CreatureEntity) {
 
-    val borderModifier = when (creature.rarity) {
-        Rarity.MYTHICAL -> Modifier.border(
-            width = 3.dp,
-            RarityColors.MYTHICAL_BRUSH,
-            shape = RoundedCornerShape(12.dp)
-        )
-        Rarity.COMMON -> Modifier.border(3.dp, RarityColors.COMMON, RoundedCornerShape(12.dp))
-        Rarity.RARE -> Modifier.border(3.dp, RarityColors.RARE, RoundedCornerShape(12.dp))
-        Rarity.EPIC -> Modifier.border(3.dp, RarityColors.EPIC, RoundedCornerShape(12.dp))
-        Rarity.LEGENDARY -> Modifier.border(3.dp, RarityColors.LEGENDARY, RoundedCornerShape(12.dp))
-    }
+    val borderModifier = Modifier.border(
+        width = 3.dp,
+        brush = creature.rarity.borderColor,
+        shape = RoundedCornerShape(12.dp)
+    )
 
     Box(
         modifier = Modifier
@@ -47,25 +41,27 @@ fun CreatureCard(creature: Creature) {
         ) {
             Image(
                 painter = painterResource(id = creature.imageResId),
-                contentDescription = creature.name,
+                contentDescription = creature.creatureName,
                 modifier = Modifier.size(96.dp)
             )
+
             Text(
-                creature.name,
+                creature.creatureName,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
+
             Text(
-                text = creature.rarity.name,
+                text = creature.rarity.displayName,
                 style = MaterialTheme.typography.labelSmall,
-                color = when (creature.rarity) {
-                    Rarity.MYTHICAL -> RarityColors.MYTHICAL_TEXT
-                    Rarity.COMMON -> RarityColors.COMMON
-                    Rarity.RARE -> RarityColors.RARE
-                    Rarity.EPIC -> RarityColors.EPIC
-                    Rarity.LEGENDARY -> RarityColors.LEGENDARY
-                }
+                color = creature.rarity.textColor
             )
+
+            Text(
+                text = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date(creature.hatchedAt)),
+                style = MaterialTheme.typography.bodySmall
+            )
+
         }
     }
 }

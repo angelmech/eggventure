@@ -6,17 +6,23 @@ package com.example.eggventure.model.creature
 interface CreatureDataInterface {
 
     /**
-     * Inserts a new creature into the data source.
-     *
-     * @param creature The [Creature] to be inserted.
+     * Gets all creatures from the data source.
      */
     fun getAllCreatures(): List<Creature>
 
 
     /**
-     * Inserts a new creature into the data source.
+     * gets a creature by its ID from the data source.
      *
-     * @param creature The [Creature] to be inserted.
+     * @param id the ID of the creature to retrieve.
      */
     fun getById(id: Int): Creature?
+
+
+    /**
+     * Gets a creature by its name from the data source.
+     *
+     * @param name the name of the creature to retrieve.
+     */
+    fun getByName(name: String): Creature?
 }

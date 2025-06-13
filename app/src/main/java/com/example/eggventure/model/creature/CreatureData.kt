@@ -10,10 +10,6 @@ data class Creature(
     @DrawableRes val imageResId: Int
 )
 
-enum class Rarity {
-    COMMON, RARE, EPIC, LEGENDARY, MYTHICAL
-}
-
 object CreatureDatabase : CreatureDataInterface {
     private val allCreatures = listOf(
         Creature(1, "Echoes", Rarity.COMMON, R.drawable.creature_stand1),
@@ -31,4 +27,8 @@ object CreatureDatabase : CreatureDataInterface {
     override fun getAllCreatures() = allCreatures
 
     override fun getById(id: Int) = allCreatures.find { it.id == id }
+
+    override fun getByName(name: String): Creature? {
+        return allCreatures.find { it.name.equals(name, ignoreCase = true) }
+    }
 }
