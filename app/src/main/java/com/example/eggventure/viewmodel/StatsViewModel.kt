@@ -7,6 +7,9 @@ import com.example.eggventure.model.run.RunRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 
@@ -42,6 +45,12 @@ class StatsViewModel(private val runRepository: RunRepository) : ViewModel() {
         val minutes = TimeUnit.MILLISECONDS.toMinutes(durationMillis) % 60
         val seconds = TimeUnit.MILLISECONDS.toSeconds(durationMillis) % 60
         return String.format("%02d:%02d:%02d", hours, minutes, seconds)
+    }
+
+    // Formatiert den Timestamp in ein lesbares Datum
+    fun formatDate(timestamp: Long): String {
+        val sdf = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
+        return sdf.format(Date(timestamp))
     }
 
     // Formatiert die Distanz zu km (mit 2 Nachkommastellen)
