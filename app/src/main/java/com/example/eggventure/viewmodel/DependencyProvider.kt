@@ -89,4 +89,8 @@ object DependencyProvider {
             provideEnvironmentSensorManager(context)
         )
     }
+
+    fun provideStats(context: Context): StatsViewModel { //TODO MOVE TO INTERFACE ::)
+        return StatsViewModel(provideRunRepository(context))
+    }
 }
