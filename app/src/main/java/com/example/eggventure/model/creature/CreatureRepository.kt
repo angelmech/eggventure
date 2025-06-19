@@ -1,5 +1,7 @@
 package com.example.eggventure.model.creature
 
+import kotlinx.coroutines.flow.Flow
+
 /**
  * Repository interface for managing creature data.
  */
@@ -40,5 +42,5 @@ interface CreatureRepository {
      *
      * @return A list of all [CreatureEntity] objects.
      */
-    suspend fun getAllCreatures(): List<CreatureEntity>
+    fun getAllCreatures(): Flow<List<CreatureEntity>>
 }

@@ -3,6 +3,7 @@ package com.example.eggventure.model.creature
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CreatureDao {
@@ -10,7 +11,7 @@ interface CreatureDao {
     suspend fun insertCreature(creature: CreatureEntity)
 
     @Query("SELECT * FROM creatures ORDER BY hatchedAt DESC")
-    suspend fun getAllCreatures(): List<CreatureEntity>
+    fun getAllCreatures(): Flow<List<CreatureEntity>>
 
     // get creature name
     @Query("SELECT creatureName FROM creatures WHERE id = :creatureId")

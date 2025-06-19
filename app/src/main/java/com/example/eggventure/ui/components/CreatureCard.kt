@@ -59,7 +59,8 @@ fun CreatureCard(creature: CreatureEntity) {
 
             Text(
                 text = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date(creature.hatchedAt)),
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface
             )
 
         }

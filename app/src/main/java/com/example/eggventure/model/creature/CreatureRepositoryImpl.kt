@@ -1,5 +1,7 @@
 package com.example.eggventure.model.creature
 
+import kotlinx.coroutines.flow.Flow
+
 class CreatureRepositoryImpl(private val creatureDao: CreatureDao) : CreatureRepository {
 
     override suspend fun insertCreature(creatures: CreatureEntity) {
@@ -18,7 +20,7 @@ class CreatureRepositoryImpl(private val creatureDao: CreatureDao) : CreatureRep
         return creatureDao.getCreatureHatchTime(creatureId)
     }
 
-    override suspend fun getAllCreatures(): List<CreatureEntity> {
+    override fun getAllCreatures(): Flow<List<CreatureEntity>> {
         return creatureDao.getAllCreatures()
     }
 }
