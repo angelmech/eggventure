@@ -2,7 +2,7 @@ package com.example.eggventure.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.eggventure.model.repository.RunRepository
+import com.example.eggventure.model.run.RunRepository
 
 class StatsViewModelFactory(private val runRepository: RunRepository) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")

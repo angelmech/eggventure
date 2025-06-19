@@ -61,4 +61,9 @@ interface RunRepository {
      * @return The total steps of the last run, or null if no runs are found.
      */
     suspend fun getLastRunSteps(): Int?
+
+    suspend fun getWeeklyAverage(weekAgo: Long): Double
+
+    suspend fun getWeeklyAverageDistance(weekAgo: Long): Double
+
 }
