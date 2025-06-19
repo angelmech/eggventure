@@ -71,9 +71,9 @@ fun RunListItem(run: RunEntity, statsViewModel: StatsViewModel) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-
-        ){
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        //elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+    ){
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = "Lauf ${run.id}", fontWeight = FontWeight.Bold)
             Text(text = "Datum: ${statsViewModel.formatDate(run.date)}")
