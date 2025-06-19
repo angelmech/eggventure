@@ -53,13 +53,13 @@ class RunRepositoryImpl(private val runDao: RunDao) : RunRepository {
         return lastRunSteps
     }
 
-    suspend fun getWeeklyAverage(weekAgo: Long): Double {
+    override suspend fun getWeeklyAverage(weekAgo: Long): Double {
         val weeklyAverage = runDao.getWeeklyAverage(weekAgo)
         Log.d("RunRepository", "Weekly average retrieved: $weeklyAverage")
         return weeklyAverage
     }
 
-    suspend fun getWeeklyAverageDistance(weekAgo: Long): Double {
+    override suspend fun getWeeklyAverageDistance(weekAgo: Long): Double {
         val weeklyAverageDistance = runDao.getWeeklyAverageDistance(weekAgo)
         Log.d("RunRepository", "Weekly average distance retrieved: $weeklyAverageDistance")
         return weeklyAverageDistance

@@ -2,8 +2,8 @@ package com.example.eggventure.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.eggventure.model.entity.RunEntity
-import com.example.eggventure.model.repository.RunRepository
+import com.example.eggventure.model.run.RunEntity
+import com.example.eggventure.model.run.RunRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
