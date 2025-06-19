@@ -4,8 +4,10 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.eggventure.model.AppDatabase
-import com.example.eggventure.model.repository.HatchProgressRepository
-import com.example.eggventure.model.repository.RunRepository
+import com.example.eggventure.model.hatchprogress.HatchProgressRepository
+import com.example.eggventure.model.hatchprogress.HatchProgressRepositoryImpl
+import com.example.eggventure.model.run.RunRepository
+import com.example.eggventure.model.run.RunRepositoryImpl
 import com.example.eggventure.utils.StepSensorManagerImpl
 
 /**
@@ -21,8 +23,8 @@ class StepCounterFactory(
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val db = AppDatabase.getDatabase(context)
 
-        val hatchProgressRepository = HatchProgressRepository(db.hatchProgressDao())
-        val runRepository = RunRepository(db.runDao())
+        val hatchProgressRepository : HatchProgressRepository = HatchProgressRepositoryImpl(db.hatchProgressDao())
+        val runRepository : RunRepository = RunRepositoryImpl(db.runDao())
 
         val eggHatchEvent = EggHatchEvent(hatchProgressRepository)
         val runPersistence = RunPersistence(runRepository)

@@ -1,35 +1,33 @@
-package com.example.eggventure.model.repository
+package com.example.eggventure.model.hatchprogress
 
 import android.util.Log
-import com.example.eggventure.model.dao.HatchProgressDao
-import com.example.eggventure.model.entity.HatchProgressEntity
 
-class HatchProgressRepository(private val hatchProgressDao: HatchProgressDao) {
+class HatchProgressRepositoryImpl(private val hatchProgressDao: HatchProgressDao) : HatchProgressRepository {
 
-    suspend fun insertProgress(progress: HatchProgressEntity) {
+    override suspend fun insertProgress(progress: HatchProgressEntity) {
         hatchProgressDao.insertProgress(progress)
         Log.d("HatchProgressRepo", "Hatch progress inserted successfully: $progress")
     }
 
-    suspend fun getHatchProgressSteps(): Int? {
+    override suspend fun getHatchProgressSteps(): Int? {
         val steps = hatchProgressDao.getHatchProgressSteps()
         Log.d("HatchProgressRepo", "Steps accumulated retrieved: $steps")
         return steps
     }
 
-    suspend fun getHatchGoal(): Int? {
+    override suspend fun getHatchGoal(): Int? {
         val hatchGoal = hatchProgressDao.getHatchGoal()
         Log.d("HatchProgressRepo", "Hatch goal retrieved: $hatchGoal")
         return hatchGoal
     }
 
-    suspend fun getLastHatchProgress(): HatchProgressEntity? {
+    override suspend fun getLastHatchProgress(): HatchProgressEntity? {
         val lastProgress = hatchProgressDao.getLastHatchProgress()
         Log.d("HatchProgressRepo", "Last hatch progress retrieved: $lastProgress")
         return lastProgress
     }
 
-    suspend fun updateHatchProgress(id: Int, stepsAccumulated: Int) {
+    override suspend fun updateHatchProgress(id: Int, stepsAccumulated: Int) {
         hatchProgressDao.updateHatchProgress(id, stepsAccumulated)
         Log.d("HatchProgressRepo", "Hatch progress updated successfully. ID: $id, Steps: $stepsAccumulated")
     }

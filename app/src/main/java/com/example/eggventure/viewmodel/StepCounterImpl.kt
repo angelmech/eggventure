@@ -1,7 +1,7 @@
 package com.example.eggventure.viewmodel
 
 import androidx.lifecycle.*
-import com.example.eggventure.model.repository.HatchProgressRepository
+import com.example.eggventure.model.hatchprogress.HatchProgressRepository
 import kotlinx.coroutines.launch
 
 class StepCounterImpl(
@@ -9,22 +9,22 @@ class StepCounterImpl(
     private val hatchEvent: EggHatchEvent,
     private val runPersistence: RunPersistence,
     private val hatchProgressRepository: HatchProgressRepository
-) : ViewModel(), StepCounter {
+) : ViewModel() {
 
     private val _stepCount = MutableLiveData(0)
-    override val stepCount: LiveData<Int> = _stepCount
+    val stepCount: LiveData<Int> = _stepCount
 
     private val _isTracking = MutableLiveData(false)
-    override val isTracking: LiveData<Boolean> = _isTracking
+    val isTracking: LiveData<Boolean> = _isTracking
 
     private val _eggHatched = MutableLiveData(false)
-    override val eggHatched: LiveData<Boolean> = _eggHatched
+    val eggHatched: LiveData<Boolean> = _eggHatched
 
     private var hatchId: Int? = null
     private var hatchGoal: Int = 5000
     private var currentSteps: Int = 0
 
-    override fun initProgress() {
+    fun initProgress() {
         viewModelScope.launch {
             val progress = hatchProgressRepository.getLastHatchProgress()
             if (progress != null) {
@@ -36,7 +36,7 @@ class StepCounterImpl(
         }
     }
 
-    override fun startTracking() {
+    fun startTracking() {
         if (_isTracking.value == true) return
         _isTracking.postValue(true)
         _eggHatched.postValue(false)
@@ -56,7 +56,7 @@ class StepCounterImpl(
         }
     }
 
-    override fun stopTracking() {
+    fun stopTracking() {
         _isTracking.postValue(false)
         trackingService.stop()
         viewModelScope.launch {
@@ -65,9 +65,9 @@ class StepCounterImpl(
         }
     }
 
-    override fun addFakeStep(fakeStepCount: Int) {
+    fun addFakeStep(fakeSteps: Int = 123) {
         viewModelScope.launch {
-            currentSteps += fakeStepCount
+            currentSteps += fakeSteps
             val hatched = hatchId?.let { id ->
                 hatchEvent.processHatch(id, currentSteps, hatchGoal)
             } ?: false

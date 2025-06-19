@@ -1,4 +1,4 @@
-package com.example.eggventure.model.entity
+package com.example.eggventure.model.hatchprogress
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

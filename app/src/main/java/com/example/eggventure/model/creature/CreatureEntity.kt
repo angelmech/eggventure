@@ -1,10 +1,10 @@
-package com.example.eggventure.model.entity
+package com.example.eggventure.model.creature
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "eggs")
-data class EggEntity(
+@Entity(tableName = "creatures")
+data class CreatureEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val creatureName: String,
     val rarity: String,

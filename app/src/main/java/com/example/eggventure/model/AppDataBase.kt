@@ -4,20 +4,20 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.eggventure.model.dao.EggDao
-import com.example.eggventure.model.dao.HatchProgressDao
-import com.example.eggventure.model.dao.RunDao
-import com.example.eggventure.model.entity.EggEntity
-import com.example.eggventure.model.entity.HatchProgressEntity
-import com.example.eggventure.model.entity.RunEntity
+import com.example.eggventure.model.creature.CreatureDao
+import com.example.eggventure.model.hatchprogress.HatchProgressDao
+import com.example.eggventure.model.run.RunDao
+import com.example.eggventure.model.creature.CreatureEntity
+import com.example.eggventure.model.hatchprogress.HatchProgressEntity
+import com.example.eggventure.model.run.RunEntity
 
 @Database(
-    entities = [RunEntity::class, HatchProgressEntity::class, EggEntity::class],
-    version = 2,
+    entities = [RunEntity::class, HatchProgressEntity::class, CreatureEntity::class],
+    version = 3,
     exportSchema = false // true if you want to export to JSON file
 )
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun eggDao(): EggDao
+    abstract fun creatureDao(): CreatureDao
     abstract fun hatchProgressDao(): HatchProgressDao
     abstract fun runDao(): RunDao
 

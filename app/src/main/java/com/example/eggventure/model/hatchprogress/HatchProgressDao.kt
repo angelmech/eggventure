@@ -1,9 +1,8 @@
-package com.example.eggventure.model.dao
+package com.example.eggventure.model.hatchprogress
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.example.eggventure.model.entity.HatchProgressEntity
 
 @Dao
 interface HatchProgressDao {

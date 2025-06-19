@@ -1,7 +1,8 @@
 package com.example.eggventure.viewmodel
 
-import com.example.eggventure.model.entity.RunEntity
-import com.example.eggventure.model.repository.RunRepository
+import com.example.eggventure.model.run.RunEntity
+import com.example.eggventure.model.run.RunRepository
+import com.example.eggventure.model.run.RunRepositoryImpl
 
 class RunPersistence(
     private val runRepository: RunRepository
