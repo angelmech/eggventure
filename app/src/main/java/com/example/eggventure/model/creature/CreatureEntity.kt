@@ -5,11 +5,12 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 
 @Entity(tableName = "creatures")
-@TypeConverters(RarityConverter::class)
+@TypeConverters(RarityConverter::class, CreatureTypeConverter::class)
 data class CreatureEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val creatureName: String,
-    val rarity: Rarity,
+    val type: CreatureType,
     val imageResId: Int,
+    val rarity: Rarity,
     val hatchedAt: Long = System.currentTimeMillis(),
 )

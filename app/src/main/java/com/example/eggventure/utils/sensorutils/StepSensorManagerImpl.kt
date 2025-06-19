@@ -14,7 +14,11 @@ class StepSensorManagerImpl(private val context: Context) : StepSensorManager {
 
     override fun registerListener(listener: SensorEventListener) {
         sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        stepSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
+        //val sensorList = sensorManager!!.getSensorList(Sensor.TYPE_ALL)
+        //stepSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
+        //for (sensor in sensorList) {
+        //    Log.d("AvailableSensor", "Name: ${sensor.name}, Type: ${sensor.type}")
+        //}
 
         if (stepSensor == null) {
             Log.e("StepSensorManager", "Step counter sensor not available.")

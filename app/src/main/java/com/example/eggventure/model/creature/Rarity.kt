@@ -3,7 +3,6 @@ package com.example.eggventure.model.creature
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
-import androidx.room.TypeConverter
 
 enum class Rarity(
     val displayName: String,
@@ -11,7 +10,7 @@ enum class Rarity(
     val textColor: Color
 ) {
     COMMON(
-        "Common",
+        "COMMON",
         Brush.linearGradient(
             colors = listOf(Color(0xFFBABABA), Color(0xFFD6D6D6)),
             tileMode = TileMode.Clamp
@@ -19,7 +18,7 @@ enum class Rarity(
         Color(0xFFBABABA)
     ),
     RARE(
-        "Rare",
+        "RARE",
         Brush.linearGradient(
             colors = listOf(Color(0xFF0093FF), Color(0xFF66CCFF)),
             tileMode = TileMode.Clamp
@@ -27,7 +26,7 @@ enum class Rarity(
         Color(0xFF0093FF)
     ),
     EPIC(
-        "Epic",
+        "EPIC",
         Brush.linearGradient(
             colors = listOf(Color(0xFF7100B8), Color(0xFFD287FF)),
             tileMode = TileMode.Clamp
@@ -35,7 +34,7 @@ enum class Rarity(
         Color(0xFF7100B8)
     ),
     LEGENDARY(
-        "Legendary",
+        "LEGENDARY",
         Brush.linearGradient(
             colors = listOf(Color(0xFFFFA000), Color(0xFFFFD54F)),
             tileMode = TileMode.Clamp
@@ -43,7 +42,7 @@ enum class Rarity(
         Color(0xFFFFA000)
     ),
     MYTHICAL(
-        "Mythical",
+        "MYTHICAL",
         Brush.linearGradient(
             colors = listOf(
                 Color(0xFFE600FF),
