@@ -64,6 +64,6 @@ interface RunRepository {
 
     suspend fun getWeeklyAverage(weekAgo: Long): Double
 
-    suspend fun getWeeklyAverageDistance(weekAgo: Long): Double
+    //suspend fun getWeeklyAverageDistance(weekAgo: Long): Double
 
 }

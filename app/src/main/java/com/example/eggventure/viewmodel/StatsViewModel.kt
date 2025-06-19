@@ -21,9 +21,6 @@ class StatsViewModel(private val runRepository: RunRepository) : ViewModel() {
     private val _weeklyAverageSteps = MutableStateFlow<Double>(0.0)
     val weeklyAverageSteps: StateFlow<Double> = _weeklyAverageSteps
 
-    private val _weeklyAverageDistance = MutableStateFlow<Double>(0.0)
-    val weeklyAverageDistance: StateFlow<Double> = _weeklyAverageDistance
-
     init {
         viewModelScope.launch {
             runRepository.getAllRuns().collect { runs ->
@@ -36,10 +33,6 @@ class StatsViewModel(private val runRepository: RunRepository) : ViewModel() {
         viewModelScope.launch {
             val weekAgo = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(7)
             _weeklyAverageSteps.value = runRepository.getWeeklyAverage(weekAgo)
-        }
-        viewModelScope.launch {
-            val weekAgo = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(7)
-            _weeklyAverageDistance.value = runRepository.getWeeklyAverageDistance(weekAgo)
         }
     }
 
