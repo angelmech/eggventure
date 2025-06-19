@@ -1,12 +1,11 @@
 package com.example.eggventure.viewmodel.creaturelogic
 
-import android.health.connect.datatypes.units.Temperature
 import android.util.Log
 import com.example.eggventure.model.creature.Creature
 import com.example.eggventure.model.creature.CreatureDataInterface
-import com.example.eggventure.model.creature.CreatureDatabase
 import com.example.eggventure.model.creature.CreatureEntity
 import com.example.eggventure.model.creature.CreatureRepository
+import com.example.eggventure.model.creature.CreatureType
 import com.example.eggventure.model.creature.Rarity
 import com.example.eggventure.model.hatchprogress.HatchProgressRepository
 import kotlinx.coroutines.Dispatchers
@@ -30,6 +29,7 @@ class EggHatchEvent(
         goal: Int,
         hatchTimestamp: Long = System.currentTimeMillis(),
         creatureData: CreatureDataInterface,
+        lightLevel: Float?
     ): CreatureEntity? = withContext(Dispatchers.IO) {
         if (currentSteps < goal) {
             // Not yet hatched, just update progress
@@ -40,13 +40,12 @@ class EggHatchEvent(
         // Reset progress on hatch
         hatchProgressRepository.updateHatchProgress(hatchId, 0)
 
-        // Pick a creature based on rarity chances
-        val hatchedCreature = pickCreatureBasedOnRarity(creatureData)
+        val hatchedCreature = pickCreatureBasedOnRarityAndType(creatureData, lightLevel)
 
-        // Create a CreatureEntity with timestamp
         val creatureEntity = CreatureEntity(
             creatureName = hatchedCreature.name,
             rarity = hatchedCreature.rarity,
+            type = hatchedCreature.type,
             imageResId = hatchedCreature.imageResId,
             hatchedAt = hatchTimestamp
         )
@@ -58,38 +57,62 @@ class EggHatchEvent(
         return@withContext creatureEntity
     }
 
+
     /**
-     * Pick a creature weighted by rarity:
-     * TODO: Later enhance with sensor data or user context influencing chances.
+     * Selects a creature based on rarity chances.
+     * also type is considered
+     *
+     * @return Creature
      */
-    private fun pickCreatureBasedOnRarity(
-        creatureData: CreatureDataInterface
+    private fun pickCreatureBasedOnRarityAndType(
+        creatureData: CreatureDataInterface,
+        lightLevel: Float?
     ): Creature {
-        // Define rarity chances (sum to 100)
-        val rarityRoll = Random.nextInt(100)
-        val rarity = when (rarityRoll) {
-            in 0..39 -> Rarity.COMMON         // 40%
-            in 40..69 -> Rarity.RARE        // 30%
-            in 70..89 -> Rarity.EPIC        // 20%
-            in 90..97 -> Rarity.LEGENDARY   // 8%
-            else -> Rarity.MYTHICAL               // 2%
-        }
+        val type = determineType(lightLevel)
+        val rarity = rarityRoll()
 
-        // Get creatures of that rarity from passed creatureData
         val possibleCreatures = creatureData.getAllCreatures()
-            .filter { it.rarity == rarity }
+            .filter { it.type == type }
 
-        // Defensive fallback if none found
-        if (possibleCreatures.isEmpty()) {
-            // fallback to common creatures from passed creatureData
-            return creatureData.getAllCreatures()
-                .first { it.rarity == Rarity.COMMON }
-        }
+        val chosen = possibleCreatures.randomOrNull()
+            ?: creatureData.getAllCreatures().random() // fallback
 
-        Log.d("EggHatchEvent", "Picked ${rarity.name} creature: ${possibleCreatures.first().name}")
+        Log.d("EggHatchEvent", "Picked $rarity $type creature: ${chosen.name}")
 
-        // Pick random creature from filtered list
-        return possibleCreatures.random()
+        return chosen.copy(rarity = rarity)
     }
 
+    //----------Helper Functions----------
+
+    /**
+     * Determines the type of creature based on light level.
+     *
+     * @param light Light level in lux, can be null
+     *
+     * @return CreatureType based on the conditions
+     */
+    private fun determineType(light: Float?): CreatureType {
+        if (light == null) return CreatureType.REGULAR
+        return when {
+            light < 700f -> CreatureType.SHADOW
+            light < 10000f -> CreatureType.REGULAR
+            else -> CreatureType.RADIANT
+        }
+    }
+
+    /**
+     * Rolls a rarity based on defined chances.
+     * Returns a Rarity enum value.
+     * @return Rarity
+     */
+    private fun rarityRoll(): Rarity {
+        val rarityRoll = Random.nextInt(100)
+        return when (rarityRoll) {
+            in 0..39 -> Rarity.COMMON         // 40%
+            in 40..69 -> Rarity.RARE          // 30%
+            in 70..89 -> Rarity.EPIC          // 20%
+            in 90..97 -> Rarity.LEGENDARY     // 8%
+            else -> Rarity.MYTHICAL           // 2%
+        }
+    }
 }
