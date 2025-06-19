@@ -10,6 +10,8 @@ import com.example.eggventure.model.hatchprogress.HatchProgressRepository
 import com.example.eggventure.model.hatchprogress.HatchProgressRepositoryImpl
 import com.example.eggventure.model.run.RunRepository
 import com.example.eggventure.model.run.RunRepositoryImpl
+import com.example.eggventure.utils.sensorutils.EnvironmentSensorManager
+import com.example.eggventure.utils.sensorutils.EnvironmentSensorManagerImpl
 import com.example.eggventure.utils.sensorutils.StepSensorManager
 import com.example.eggventure.utils.sensorutils.StepSensorManagerImpl
 import com.example.eggventure.viewmodel.creaturelogic.CreatureLogic
@@ -66,6 +68,10 @@ object DependencyProvider {
         return StepSensorManagerImpl(context)
     }
 
+    fun provideEnvironmentSensorManager(context: Context): EnvironmentSensorManager {
+        return EnvironmentSensorManagerImpl(context)
+    }
+
     fun provideStepCounter(context: Context): StepCounterInterface {
         return StepCounter(
             provideStepSensorManager(context),
@@ -79,7 +85,8 @@ object DependencyProvider {
         return CreatureLogic(
             provideCreatureData(),
             provideEggHatchEvent(context),
-            provideCreatureRepository(context)
+            provideCreatureRepository(context),
+            provideEnvironmentSensorManager(context)
         )
     }
 }

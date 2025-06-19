@@ -1,5 +1,6 @@
 package com.example.eggventure.viewmodel.creaturelogic
 
+import android.health.connect.datatypes.units.Temperature
 import android.util.Log
 import com.example.eggventure.model.creature.Creature
 import com.example.eggventure.model.creature.CreatureDataInterface
@@ -28,7 +29,7 @@ class EggHatchEvent(
         currentSteps: Int,
         goal: Int,
         hatchTimestamp: Long = System.currentTimeMillis(),
-        creatureData: CreatureDataInterface
+        creatureData: CreatureDataInterface,
     ): CreatureEntity? = withContext(Dispatchers.IO) {
         if (currentSteps < goal) {
             // Not yet hatched, just update progress

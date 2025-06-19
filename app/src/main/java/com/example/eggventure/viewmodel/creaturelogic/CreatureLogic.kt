@@ -7,6 +7,7 @@ import com.example.eggventure.model.creature.Creature
 import com.example.eggventure.model.creature.CreatureDataInterface
 import com.example.eggventure.model.creature.CreatureEntity
 import com.example.eggventure.model.creature.CreatureRepository
+import com.example.eggventure.utils.sensorutils.EnvironmentSensorManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +19,8 @@ import kotlinx.coroutines.launch
 class CreatureLogic(
     private val creature: CreatureDataInterface,
     private val eggHatchEvent: EggHatchEvent,
-    private val creatureRepository: CreatureRepository
+    private val creatureRepository: CreatureRepository,
+    private val environmentSensorManager: EnvironmentSensorManager
 ) : ViewModel(), CreatureLogicInterface {
 
     private val sortManager = CreatureSortManager()
@@ -39,12 +41,16 @@ class CreatureLogic(
     ): Boolean {
         val timestamp = System.currentTimeMillis()
 
+        // temp + light
+        val (temperature, light) = environmentSensorManager.readOnce()
         val result = eggHatchEvent.processHatchEvent(
             hatchId = creatureId,
             currentSteps = hatchProgressSteps,
             goal = hatchGoal,
             hatchTimestamp = timestamp,
-            creatureData = creature
+            creatureData = creature,
+            //temperature = temperature,
+            //light = light
         )
 
         return result != null
