@@ -75,7 +75,7 @@ fun SammlungScreen(navController: NavHostController) {
                     DropdownMenuItem(
                         text = {
                             Text(
-                                "Kein Filter",
+                                "Datum",
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                         },

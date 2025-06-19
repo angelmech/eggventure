@@ -1,5 +1,6 @@
 package com.example.eggventure.viewmodel.creaturelogic
 
+import android.util.Log
 import com.example.eggventure.model.creature.Creature
 import com.example.eggventure.model.creature.CreatureDataInterface
 import com.example.eggventure.model.creature.CreatureDatabase
@@ -39,17 +40,19 @@ class EggHatchEvent(
         hatchProgressRepository.updateHatchProgress(hatchId, 0)
 
         // Pick a creature based on rarity chances
-        val hatchedCreature = pickCreatureBasedOnRarity(hatchTimestamp, creatureData)
+        val hatchedCreature = pickCreatureBasedOnRarity(creatureData)
 
         // Create a CreatureEntity with timestamp
         val creatureEntity = CreatureEntity(
             creatureName = hatchedCreature.name,
-            rarity = hatchedCreature.rarity.name,
+            rarity = hatchedCreature.rarity,
+            imageResId = hatchedCreature.imageResId,
             hatchedAt = hatchTimestamp
         )
 
         // Save the new creature to DB
         creatureRepository.insertCreature(creatureEntity)
+        Log.d("EggHatchEvent", "Hatched creature: ${creatureEntity.creatureName} at ${creatureEntity.hatchedAt}")
 
         return@withContext creatureEntity
     }
@@ -59,17 +62,16 @@ class EggHatchEvent(
      * TODO: Later enhance with sensor data or user context influencing chances.
      */
     private fun pickCreatureBasedOnRarity(
-        timestamp: Long,
         creatureData: CreatureDataInterface
     ): Creature {
         // Define rarity chances (sum to 100)
         val rarityRoll = Random.nextInt(100)
-        val rarity = when {
-            rarityRoll < 40 -> Rarity.COMMON       // 40%
-            rarityRoll < 70 -> Rarity.RARE         // 30%
-            rarityRoll < 90 -> Rarity.EPIC         // 20%
-            rarityRoll < 98 -> Rarity.LEGENDARY    // 8%
-            else -> Rarity.MYTHICAL                 // 2%
+        val rarity = when (rarityRoll) {
+            in 0..39 -> Rarity.COMMON         // 40%
+            in 40..69 -> Rarity.RARE        // 30%
+            in 70..89 -> Rarity.EPIC        // 20%
+            in 90..97 -> Rarity.LEGENDARY   // 8%
+            else -> Rarity.MYTHICAL               // 2%
         }
 
         // Get creatures of that rarity from passed creatureData
@@ -82,6 +84,8 @@ class EggHatchEvent(
             return creatureData.getAllCreatures()
                 .first { it.rarity == Rarity.COMMON }
         }
+
+        Log.d("EggHatchEvent", "Picked ${rarity.name} creature: ${possibleCreatures.first().name}")
 
         // Pick random creature from filtered list
         return possibleCreatures.random()

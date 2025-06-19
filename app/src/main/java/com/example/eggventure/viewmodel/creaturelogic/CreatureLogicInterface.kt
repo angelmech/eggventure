@@ -14,6 +14,11 @@ interface CreatureLogicInterface {
      */
     fun toggleSortByRarity()
 
+    /**
+     * Resets the sorting of creatures to the default order.
+     */
+    fun resetSort()
+
 
     /**
      * Initiates the hatching process for a creature.
