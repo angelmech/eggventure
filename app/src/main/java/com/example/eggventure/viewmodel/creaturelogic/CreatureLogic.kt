@@ -41,16 +41,15 @@ class CreatureLogic(
     ): Boolean {
         val timestamp = System.currentTimeMillis()
 
-        // temp + light
-        val (temperature, light) = environmentSensorManager.readOnce()
+        val light = environmentSensorManager.readOnce()
+
         val result = eggHatchEvent.processHatchEvent(
             hatchId = creatureId,
             currentSteps = hatchProgressSteps,
             goal = hatchGoal,
             hatchTimestamp = timestamp,
             creatureData = creature,
-            //temperature = temperature,
-            //light = light
+            lightLevel = light
         )
 
         return result != null
