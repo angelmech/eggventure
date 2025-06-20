@@ -13,7 +13,7 @@ import com.example.eggventure.model.run.RunEntity
 
 @Database(
     entities = [RunEntity::class, HatchProgressEntity::class, CreatureEntity::class],
-    version = 6,
+    version = 7,
     exportSchema = false // true if you want to export to JSON file
 )
 abstract class AppDatabase : RoomDatabase() {
