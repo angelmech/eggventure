@@ -3,6 +3,7 @@ package com.example.eggventure.model.run
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RunDao {
@@ -10,7 +11,7 @@ interface RunDao {
     suspend fun insertRun(run: RunEntity)
 
     @Query("SELECT * FROM runs ORDER BY date DESC")
-    suspend fun getAllRuns(): List<RunEntity>
+    fun getAllRuns(): Flow<List<RunEntity>>
 
     // get the last run
     @Query("SELECT * FROM runs ORDER BY date DESC LIMIT 1")

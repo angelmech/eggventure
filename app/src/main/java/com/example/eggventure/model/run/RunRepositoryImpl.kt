@@ -11,10 +11,10 @@ class RunRepositoryImpl(private val runDao: RunDao) : RunRepository {
         Log.d("RunRepository", "Run inserted successfully: $run")
     }
 
-    override fun getAllRuns(): Flow<List<RunEntity>> = flow {
-        val runs = runDao.getAllRuns()
-        emit(runs)
-        Log.d("RunRepository", "All runs retrieved: $runs")
+    override fun getAllRuns(): Flow<List<RunEntity>> {
+        val runsFlow = runDao.getAllRuns()
+        Log.d("RunRepository", "Subscribing to all runs flow.")
+        return runsFlow
     }
 
     override suspend fun getLastRun(): RunEntity? {
@@ -53,13 +53,15 @@ class RunRepositoryImpl(private val runDao: RunDao) : RunRepository {
         return lastRunSteps
     }
 
+    /*
+
     override suspend fun getWeeklyAverage(weekAgo: Long): Double {
         val weeklyAverage = runDao.getWeeklyAverage(weekAgo)
         Log.d("RunRepository", "Weekly average retrieved: $weeklyAverage")
         return weeklyAverage
     }
 
-    /*
+
     override suspend fun getWeeklyAverageDistance(weekAgo: Long): Double {
         val weeklyAverageDistance = runDao.getWeeklyAverageDistance(weekAgo)
         Log.d("RunRepository", "Weekly average distance retrieved: $weeklyAverageDistance")

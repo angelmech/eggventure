@@ -1,5 +1,6 @@
 package com.example.eggventure.ui.screens
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import com.example.eggventure.ui.components.TopBar
 import com.example.eggventure.viewmodel.StatsViewModel
 import com.example.eggventure.viewmodel.StatsViewModelFactory
 import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,22 +47,38 @@ fun StatsScreen(navController: NavHostController) {
         ) {
             // ---Hier Seiteninhalt einfügen---
 
-            Text (text = "Total Runs: ${allRuns.value.size}",
-                color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 18.sp,)
-            LazyColumn (
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp) // Horizontal padding for list items
-            ) {
-                items(allRuns.value) {run ->
-                    RunListItem(
-                        run = run,
-                        statsViewModel = stats
+            if (allRuns.value.isNotEmpty()) {
+
+                Text(
+                    text = "Total Runs: ${allRuns.value.size}",
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 18.sp,
+                )
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp) // Horizontal padding for list items
+                ) {
+                    items(allRuns.value) { run ->
+                        RunListItem(
+                            run = run,
+                            statsViewModel = stats
+                        )
+                    }
+                }
+            } else {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Deine Läufe werden hier angezeigt",
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
-            }
 
+            }
         }
     }
 }
@@ -82,3 +100,4 @@ fun RunListItem(run: RunEntity, statsViewModel: StatsViewModel) {
         }
     }
 }
+

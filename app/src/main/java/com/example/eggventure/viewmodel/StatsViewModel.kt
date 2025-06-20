@@ -33,10 +33,13 @@ class StatsViewModel(private val runRepository: RunRepository) : ViewModel() {
         viewModelScope.launch {
             _lastRun.value = runRepository.getLastRun()
         }
+        /*
         viewModelScope.launch {
             val weekAgo = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(7)
             _weeklyAverageSteps.value = runRepository.getWeeklyAverage(weekAgo)
         }
+
+         */
     }
 
     // Formatiert die Dauer zu hh:mm:ss
