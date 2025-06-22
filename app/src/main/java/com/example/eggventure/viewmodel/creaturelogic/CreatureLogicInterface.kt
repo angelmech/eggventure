@@ -1,5 +1,6 @@
 package com.example.eggventure.viewmodel.creaturelogic
 
+import android.hardware.lights.Light
 import com.example.eggventure.model.creature.CreatureEntity
 import kotlinx.coroutines.flow.StateFlow
 
@@ -27,8 +28,9 @@ interface CreatureLogicInterface {
      * @param hatchProgressSteps The number of steps required to complete the hatching process.
      * @param hatchGoal The goal for the hatching process, typically the number of steps needed to hatch the creature.
      * @param totalSteps The total number of steps taken by the user, which may be used to track progress.
+     * @param light The current light level, which may influence the hatching process or the type of creature hatched.
      *
      * @return True if the hatching process was successfully initiated, false otherwise.
      */
-    suspend fun hatchCreature(creatureId: Int, totalSteps: Int, hatchProgressSteps: Int, hatchGoal: Int): Boolean
+    suspend fun hatchCreature(creatureId: Int, totalSteps: Int, hatchProgressSteps: Int, hatchGoal: Int, light: Float?): Boolean
 }

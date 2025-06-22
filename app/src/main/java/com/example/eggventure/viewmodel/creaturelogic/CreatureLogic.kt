@@ -32,16 +32,22 @@ class CreatureLogic(
         sortManager.sort(creatures)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    private val _lastLightLevel = MutableStateFlow<Float?>(null)
+    val lastLightLevel: StateFlow<Float?> = _lastLightLevel
+
+
 
     override suspend fun hatchCreature(
         creatureId: Int,
         totalSteps: Int,
         hatchProgressSteps: Int,
-        hatchGoal: Int
+        hatchGoal: Int,
+        light: Float?
     ): Boolean {
         val timestamp = System.currentTimeMillis()
 
-        val light = environmentSensorManager.readOnce()
+        val safeLight = light ?: 0f
+        //val light = environmentSensorManager.readOnce()
 
         val result = eggHatchEvent.processHatchEvent(
             hatchId = creatureId,
@@ -49,7 +55,7 @@ class CreatureLogic(
             goal = hatchGoal,
             hatchTimestamp = timestamp,
             creatureData = creature,
-            lightLevel = light
+            lightLevel = safeLight
         )
 
         return result != null

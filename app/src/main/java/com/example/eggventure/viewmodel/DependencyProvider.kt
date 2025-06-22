@@ -77,7 +77,8 @@ object DependencyProvider {
             provideStepSensorManager(context),
             provideRunPersistence(context),
             provideHatchProgressRepository(context),
-            provideCreatureLogic(context)
+            provideCreatureLogic(context),
+            provideEnvironmentSensorManager(context)
         )
     }
 

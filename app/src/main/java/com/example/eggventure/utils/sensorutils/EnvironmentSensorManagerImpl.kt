@@ -6,6 +6,9 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.util.Log
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
@@ -37,6 +40,30 @@ class EnvironmentSensorManagerImpl(private val context: Context) : EnvironmentSe
         sensorManager.unregisterListener(sensorListener)
         callback = null
     }
+
+    override fun observeLight(): Flow<Float> = callbackFlow {
+        val listener = object : SensorEventListener {
+            override fun onSensorChanged(event: SensorEvent?) {
+                if (event?.sensor?.type == Sensor.TYPE_LIGHT) {
+                    trySend(event.values[0])
+                }
+            }
+
+            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+        }
+
+        val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT)
+        if (sensor != null) {
+            sensorManager.registerListener(listener, sensor, SensorManager.SENSOR_DELAY_NORMAL)
+        } else {
+            trySend(0f) // fallback value if no sensor
+        }
+
+        awaitClose {
+            sensorManager.unregisterListener(listener)
+        }
+    }
+
 
     override suspend fun readOnce(): Float? = suspendCancellableCoroutine { cont ->
         val oneShotListener = object : SensorEventListener {

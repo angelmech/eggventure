@@ -69,6 +69,7 @@ class EggHatchEvent(
         lightLevel: Float?
     ): Creature {
         val type = determineType(lightLevel)
+        Log.d("SensorLight", "Light level: $lightLevel lux")
         val rarity = rarityRoll()
 
         val possibleCreatures = creatureData.getAllCreatures()
@@ -98,6 +99,14 @@ class EggHatchEvent(
             light < 10000f -> CreatureType.REGULAR
             else -> CreatureType.RADIANT
         }
+        /*
+        return when {
+        light == null -> CreatureType.REGULAR
+        light >= 8000f -> CreatureType.RADIANT
+        light in 800f..7999f -> CreatureType.REGULAR
+        else -> CreatureType.SHADOW
+    }
+         */
     }
 
     /**

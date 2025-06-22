@@ -7,16 +7,20 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.example.eggventure.model.hatchprogress.HatchProgressEntity
 import com.example.eggventure.model.hatchprogress.HatchProgressRepository
+import com.example.eggventure.utils.sensorutils.EnvironmentSensorManager
 import com.example.eggventure.utils.sensorutils.StepSensorManager
 import com.example.eggventure.viewmodel.creaturelogic.CreatureLogicInterface
 import com.example.eggventure.viewmodel.creaturelogic.EggHatchEvent
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class StepCounter(
     private val stepSensorManager: StepSensorManager,
     private val runPersistence: RunPersistence,
     private val hatchProgressRepository: HatchProgressRepository,
-    private val creatureLogic: CreatureLogicInterface
+    private val creatureLogic: CreatureLogicInterface,
+    private val environmentSensorManager: EnvironmentSensorManager
 ) : ViewModel(), SensorEventListener, StepCounterInterface {
 
     private val _stepCount = MutableLiveData(0)
@@ -34,6 +38,17 @@ class StepCounter(
     private var runSteps: Int = 0
     private var fakeStepOffset: Int = 0
     private var initialTotalSteps: Int? = null
+
+    private val _currentLightLevel = MutableStateFlow<Float?>(null)
+    val currentLightLevel: StateFlow<Float?> = _currentLightLevel
+
+    init {
+        viewModelScope.launch {
+            environmentSensorManager.observeLight().collect { lux ->
+                _currentLightLevel.value = lux
+            }
+        }
+    }
 
     override fun initProgress() {
         viewModelScope.launch {
@@ -103,7 +118,12 @@ class StepCounter(
             hatchId?.let { id ->
                 //val hatched = hatchEvent.processHatch(id, hatchProgressSteps, hatchGoal)
                 // call the creatureLogic viewmodel to handle the egg hatch logic
-                val hatched = creatureLogic.hatchCreature(id, totalSteps, hatchProgressSteps, hatchGoal)
+                val hatched = creatureLogic.hatchCreature(
+                    id,
+                    totalSteps,
+                    hatchProgressSteps,
+                    hatchGoal,
+                    _currentLightLevel.value ?: 0f)
                 if (hatched) {
                     hatchProgressSteps = 0
                     fakeStepOffset = 0
