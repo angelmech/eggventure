@@ -12,18 +12,24 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -36,6 +42,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.eggventure.R
@@ -59,6 +66,7 @@ fun LaufScreen(
     val steps by stepCounter.stepCount.observeAsState(initial = 0)
     val isTracking by stepCounter.isTracking.observeAsState(false)
     val eggHatched by stepCounter.eggHatched.observeAsState()
+    val lux = stepCounter.currentLightLevel.collectAsState()
 
     // Manual hatchGoal because you store it as a var, not LiveData
     val stepGoal = 5000 // or refactor ViewModel to expose this via LiveData if needed
@@ -118,6 +126,35 @@ fun LaufScreen(
                     fontWeight = FontWeight.Medium,
                     color=Color.Black)*/
             }
+
+            //lux text
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.WbSunny,
+                    contentDescription = "Light sensor",
+                    tint = Color(0xFFFFA000),
+                    modifier = Modifier.size(20.dp)
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Text(
+                    text = "${lux.value?.toInt() ?: "?"}",
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+
+            Text(
+                text = "Kreaturarten basieren auf Lichtstärke",
+                fontSize = 10.sp,
+                color = Color.Gray,
+                lineHeight = 14.sp,
+            )
+
 
             // Circular Progress Bar with Egg
             Box(contentAlignment = Alignment.Center) {
@@ -203,7 +240,12 @@ fun LaufScreen(
                 modifier = Modifier
                     .alpha(if (isTracking) 1f else 0f)
             ) {
-                Text("Schritte hinzufügen")
+                Text(
+                    text = "Schritte simulieren",
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.Bold,
+                )
+
             }
 
             eggHatched?.let {

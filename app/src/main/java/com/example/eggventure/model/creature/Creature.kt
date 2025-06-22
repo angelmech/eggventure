@@ -20,7 +20,7 @@ object CreatureDatabase : CreatureDataInterface {
         Creature(5, "Star Platinum", CreatureType.RADIANT, R.drawable.creature_stand5),
         Creature(6, "GER", CreatureType.REGULAR, R.drawable.creature_stand6),
         Creature(7, "Weather Report", CreatureType.RADIANT, R.drawable.creature_stand7),
-        Creature(8, "Man in the mirror", CreatureType.REGULAR, R.drawable.creature_stand8),
+        Creature(8, "The World", CreatureType.REGULAR, R.drawable.creature_stand8),
         Creature(9, "Chariot Baby", CreatureType.SHADOW, R.drawable.creature_stand9),
         Creature(10, "Heavens Door", CreatureType.RADIANT, R.drawable.creature_stand10),
     )

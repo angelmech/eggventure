@@ -12,7 +12,7 @@ enum class CreatureType(
     RADIANT(
         "Radiant",
         Brush.linearGradient(
-            colors = listOf(Color(0xFFFF0000), Color(0xFF000000), Color(0xFFFFE89C)),
+            colors = listOf(Color(0xFFFF7800), Color(0xFFFF0000), Color(0xFF000000)),
             tileMode = TileMode.Clamp
         ),
         Color(0xFFFFD500)
@@ -20,7 +20,7 @@ enum class CreatureType(
     REGULAR(
         "Regular",
         Brush.linearGradient(
-            colors = listOf(Color(0xFFFFA636), Color(0xFF633F00), Color(0xFF282828)),
+            colors = listOf(Color(0xA6FFE400), Color(0x8DC1890C), Color(0x943B1C00)),
             tileMode = TileMode.Clamp
         ),
         Color(0xFFFFA37E)
