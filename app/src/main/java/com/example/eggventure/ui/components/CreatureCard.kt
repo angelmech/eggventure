@@ -18,68 +18,76 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun CreatureCard(creature: CreatureEntity) {
-
+fun CreatureCard(creature: CreatureEntity, expanded: Boolean = false) {
+    val imageSize = if (expanded) 140.dp else 96.dp
+    val cardHeight = if (expanded) 280.dp else 210.dp
     val backgroundBrush = creature.type.color
+    val cornerRadius = if (expanded) 20.dp else 12.dp
+    val padding = if (expanded) 16.dp else 8.dp
+    val spacing = if (expanded) 12.dp else 6.dp
+    val shape = RoundedCornerShape(cornerRadius)
 
     val borderModifier = Modifier.border(
-        width = 4.dp,
+        width = if (expanded) 6.dp else 4.dp,
         brush = creature.rarity.borderColor,
-        shape = RoundedCornerShape(12.dp)
+        shape = shape
     )
+
 
     Box(
         modifier = Modifier
             .padding(4.dp)
-            .height(210.dp)
+            .height(cardHeight)
             .then(borderModifier),
         contentAlignment = Alignment.Center
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(brush = backgroundBrush, shape = RoundedCornerShape(12.dp))
-                .padding(8.dp)
+                .background(brush = backgroundBrush, shape = shape)
+                .padding(padding)
         ) {
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceAround
+                verticalArrangement = Arrangement.SpaceEvenly
             ) {
-                Spacer(modifier = Modifier.height(4.dp))
                 Image(
                     painter = painterResource(id = creature.imageResId),
                     contentDescription = creature.creatureName,
-                    modifier = Modifier.size(96.dp)
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Text(
-                    creature.creatureName,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface
+                    modifier = Modifier.size(imageSize)
                 )
 
-                Text(
-                    text = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date(creature.hatchedAt)),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = creature.creatureName,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
 
-                Spacer(modifier = Modifier.height(6.dp))
-                Text(
-                    text = creature.type.displayName,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+                    Text(
+                        text = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+                            .format(Date(creature.hatchedAt)),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
 
-                Text(
-                    text = creature.rarity.displayName,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = creature.rarity.textColor
-                )
-                Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(spacing))
+
+                    Text(
+                        text = creature.type.displayName,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+
+                    Text(
+                        text = creature.rarity.displayName,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = creature.rarity.textColor
+                    )
+                }
             }
         }
     }
 }
+

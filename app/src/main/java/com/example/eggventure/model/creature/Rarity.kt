@@ -31,7 +31,7 @@ enum class Rarity(
             colors = listOf(Color(0xFF7100B8), Color(0xFFD287FF)),
             tileMode = TileMode.Clamp
         ),
-        Color(0xFF7100B8)
+        Color(0xFF9D00FF)
     ),
     LEGENDARY(
         "LEGENDARY",

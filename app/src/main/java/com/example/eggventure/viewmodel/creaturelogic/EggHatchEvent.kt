@@ -99,15 +99,18 @@ class EggHatchEvent(
             light < 10000f -> CreatureType.REGULAR
             else -> CreatureType.RADIANT
         }
-        /*
-        return when {
-        light == null -> CreatureType.REGULAR
-        light >= 8000f -> CreatureType.RADIANT
-        light in 800f..7999f -> CreatureType.REGULAR
-        else -> CreatureType.SHADOW
     }
-         */
-    }
+
+    /**
+     * Defines the chances for each rarity type.
+     */
+    private val rarityChances = listOf(
+        35 to Rarity.COMMON,      // 35%
+        25 to Rarity.RARE,        // 25%
+        20 to Rarity.EPIC,        // 20%
+        15 to Rarity.LEGENDARY,   // 15%
+        5 to Rarity.MYTHICAL     // 5%
+    )
 
     /**
      * Rolls a rarity based on defined chances.
@@ -115,13 +118,12 @@ class EggHatchEvent(
      * @return Rarity
      */
     private fun rarityRoll(): Rarity {
-        val rarityRoll = Random.nextInt(100)
-        return when (rarityRoll) {
-            in 0..39 -> Rarity.COMMON         // 40%
-            in 40..69 -> Rarity.RARE          // 30%
-            in 70..89 -> Rarity.EPIC          // 20%
-            in 90..97 -> Rarity.LEGENDARY     // 8%
-            else -> Rarity.MYTHICAL           // 2%
+        val roll = Random.nextInt(100)
+        var cumulative = 0
+        for ((chance, rarity) in rarityChances) {
+            cumulative += chance
+            if (roll < cumulative) return rarity
         }
+        return Rarity.COMMON // Fallback
     }
 }

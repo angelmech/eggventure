@@ -1,10 +1,15 @@
 package com.example.eggventure.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -12,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Sort
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -19,6 +25,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -31,8 +38,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.eggventure.model.creature.CreatureEntity
 import com.example.eggventure.ui.components.CreatureCard
 import com.example.eggventure.ui.components.TopBar
 import com.example.eggventure.viewmodel.creaturelogic.CreatureLogic
@@ -46,6 +55,8 @@ fun SammlungScreen(navController: NavHostController) {
     val creatureLogic: CreatureLogic = viewModel(factory = CreatureLogicFactory(context))
     val creatures by creatureLogic.creatures.collectAsState()
     var expanded by remember { mutableStateOf(false) }
+    val selectedCreature = remember { mutableStateOf<CreatureEntity?>(null) }
+
 
     Scaffold(
         topBar = { TopBar(
@@ -108,7 +119,43 @@ fun SammlungScreen(navController: NavHostController) {
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(creatures) { creature ->
-                CreatureCard(creature = creature)
+                Box(
+                    modifier = Modifier.clickable {
+                        selectedCreature.value = creature
+                    }
+                ) {
+                    CreatureCard(creature = creature)
+                }
+                if (selectedCreature.value != null) {
+                    Dialog(onDismissRequest = { selectedCreature.value = null }) {
+                        Surface(
+                            shape = RoundedCornerShape(16.dp),
+                            color = MaterialTheme.colorScheme.surface,
+                            tonalElevation = 6.dp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(24.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .padding(24.dp)
+                                    .wrapContentHeight(),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                CreatureCard(
+                                    creature = selectedCreature.value!!,
+                                    expanded = true
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Button(onClick = { selectedCreature.value = null }) {
+                                    Text(
+                                        text = "Abbrechen",
+                                        color = MaterialTheme.colorScheme.onSurface)
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
