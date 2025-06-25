@@ -3,7 +3,7 @@ package com.example.eggventure.viewmodel.creaturelogic
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.eggventure.viewmodel.DependencyProvider
+import com.example.eggventure.utils.DependencyProvider
 
 /**
  * Factory class for creating instances of [CreatureLogic].

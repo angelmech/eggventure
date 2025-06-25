@@ -1,4 +1,4 @@
-package com.example.eggventure.viewmodel
+package com.example.eggventure.viewmodel.stats
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -1,10 +1,9 @@
-package com.example.eggventure.viewmodel
+package com.example.eggventure.viewmodel.stats
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.eggventure.model.run.RunRepository
-import com.example.eggventure.viewmodel.stepcounter.StepCounter
+import com.example.eggventure.utils.DependencyProvider
 
 class StatsViewModelFactory(
     private val context: Context

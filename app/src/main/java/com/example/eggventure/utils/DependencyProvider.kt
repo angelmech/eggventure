@@ -1,4 +1,4 @@
-package com.example.eggventure.viewmodel
+package com.example.eggventure.utils
 
 import android.content.Context
 import com.example.eggventure.model.AppDatabase
@@ -17,6 +17,7 @@ import com.example.eggventure.utils.sensorutils.StepSensorManagerImpl
 import com.example.eggventure.viewmodel.creaturelogic.CreatureLogic
 import com.example.eggventure.viewmodel.creaturelogic.CreatureLogicInterface
 import com.example.eggventure.viewmodel.creaturelogic.EggHatchEvent
+import com.example.eggventure.viewmodel.stats.StatsViewModel
 import com.example.eggventure.viewmodel.stepcounter.RunPersistence
 import com.example.eggventure.viewmodel.stepcounter.StepCounter
 import com.example.eggventure.viewmodel.stepcounter.StepCounterInterface

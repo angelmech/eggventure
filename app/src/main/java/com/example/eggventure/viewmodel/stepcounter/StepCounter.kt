@@ -52,23 +52,28 @@ class StepCounter(
 
     override fun initProgress() {
         viewModelScope.launch {
-            val lastProgress = hatchProgressRepository.getLastHatchProgress()
-            if (lastProgress != null) {
-                hatchId = lastProgress.id
-                hatchProgressSteps = lastProgress.hatchProgressSteps
-                hatchGoal = lastProgress.hatchGoal
-                _stepCount.postValue(hatchProgressSteps)
-            } else {
-                val newProgress = HatchProgressEntity(
-                    hatchProgressSteps = 0,
-                    hatchGoal = hatchGoal
-                )
-                hatchProgressRepository.insertProgress(newProgress)
-                val freshProgress = hatchProgressRepository.getLastHatchProgress()
-                hatchId = freshProgress?.id
-                hatchProgressSteps = freshProgress?.hatchProgressSteps ?: 0
-                hatchGoal = freshProgress?.hatchGoal ?: hatchGoal
-                _stepCount.postValue(hatchProgressSteps)
+            try {
+                val lastProgress = hatchProgressRepository.getLastHatchProgress()
+                if (lastProgress != null) {
+                    hatchId = lastProgress.id
+                    hatchProgressSteps = lastProgress.hatchProgressSteps
+                    hatchGoal = lastProgress.hatchGoal
+                    _stepCount.postValue(hatchProgressSteps)
+                } else {
+                    val newProgress = HatchProgressEntity(
+                        hatchProgressSteps = 0,
+                        hatchGoal = hatchGoal
+                    )
+                    hatchProgressRepository.insertProgress(newProgress)
+                    val freshProgress = hatchProgressRepository.getLastHatchProgress()
+                    hatchId = freshProgress?.id
+                    hatchProgressSteps = freshProgress?.hatchProgressSteps ?: 0
+                    hatchGoal = freshProgress?.hatchGoal ?: hatchGoal
+                    _stepCount.postValue(hatchProgressSteps)
+                }
+            } catch (e: Exception) {
+                _stepCount.postValue(0)
+                // Optional: Logging oder Fehlerstatus setzen
             }
         }
     }
@@ -95,7 +100,7 @@ class StepCounter(
 
     override fun addFakeStep(fakeSteps: Int) {
         fakeStepOffset += fakeSteps
-        hatchProgressSteps += fakeSteps
+        hatchProgressSteps = (hatchProgressSteps + fakeSteps).coerceAtMost(hatchGoal)
 
         if (hatchProgressSteps >= hatchGoal) {
             val stepsAtHatch = initialTotalSteps?.plus(runSteps) ?: runSteps
@@ -130,45 +135,60 @@ class StepCounter(
                     initialTotalSteps = totalSteps
                     _stepCount.postValue(0)
                     _eggHatched.postValue(true)
-                    Log.d("StepCounter", "Egg hatched! Progress reset.")
+                    //Log.d("StepCounter", "Egg hatched! Progress reset.")
+                } else {
+                    // Hatch nicht erfolgt, aber Fortschritt max auf hatchGoal setzen
+                    _stepCount.postValue(hatchProgressSteps.coerceAtMost(hatchGoal))
                 }
             }
         }
     }
 
     /**
-     * Updates the step count and checks if the hatch goal is reached.
+     * Handles the step sensor data change.
+     * This function is called when the step sensor detects a change in step count.
+     *
+     * @param data The StepSensorData containing the total steps.
+     */
+    fun onStepSensorDataChanged(data: StepSensorData) {
+        val totalSteps = data.totalSteps
+
+        if (initialTotalSteps == null) {
+            initialTotalSteps = totalSteps - hatchProgressSteps
+            //Log.d("StepCounter", "Initial total steps set to $initialTotalSteps")
+        }
+
+        //Log.d("StepCounter", "step")
+
+        val realSteps = totalSteps - (initialTotalSteps ?: totalSteps)
+        runSteps = realSteps
+
+        val combinedSteps = realSteps + fakeStepOffset
+        hatchProgressSteps = combinedSteps.coerceIn(0, hatchGoal)
+
+        _stepCount.postValue(hatchProgressSteps)
+
+        if (hatchProgressSteps >= hatchGoal) {
+            startEggHatchEvent(totalSteps)
+        }
+    }
+
+    /**
+     * Handles the sensor change event.
+     * This function is called when the step sensor detects a change in step count.
+     *
+     * @param event The SensorEvent containing the step count data.
      */
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_STEP_COUNTER) {
             val totalSteps = event.values[0].toInt()
-
-            if (initialTotalSteps == null) {
-                initialTotalSteps = totalSteps - hatchProgressSteps
-                Log.d("StepCounter", "Initial total steps set to $initialTotalSteps")
-            }
-
-            Log.d("StepCounter", "step")
-
-            // Real steps since tracking started
-            val realSteps = totalSteps - (initialTotalSteps ?: totalSteps)
-            runSteps = realSteps
-
-            // Combine real + fake steps
-            val combinedSteps = realSteps + fakeStepOffset
-            hatchProgressSteps = combinedSteps.coerceAtMost(hatchGoal)
-
-            _stepCount.postValue(hatchProgressSteps)
-
-            if (hatchProgressSteps >= hatchGoal) {
-                startEggHatchEvent(totalSteps)
-            }
+            onStepSensorDataChanged(StepSensorData(totalSteps))
         }
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
 
-    override fun onCleared() {
+    public override fun onCleared() {
         stepSensorManager.unregisterListener()
     }
 }

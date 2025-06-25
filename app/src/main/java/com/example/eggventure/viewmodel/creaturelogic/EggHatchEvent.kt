@@ -52,7 +52,7 @@ class EggHatchEvent(
 
         // Save the new creature to DB
         creatureRepository.insertCreature(creatureEntity)
-        Log.d("EggHatchEvent", "Hatched creature: ${creatureEntity.creatureName} at ${creatureEntity.hatchedAt}")
+        //Log.d("EggHatchEvent", "Hatched creature: ${creatureEntity.creatureName} at ${creatureEntity.hatchedAt}")
 
         return@withContext creatureEntity
     }
@@ -69,7 +69,7 @@ class EggHatchEvent(
         lightLevel: Float?
     ): Creature {
         val type = determineType(lightLevel)
-        Log.d("SensorLight", "Light level: $lightLevel lux")
+        //Log.d("SensorLight", "Light level: $lightLevel lux")
         val rarity = rarityRoll()
 
         val possibleCreatures = creatureData.getAllCreatures()
@@ -78,7 +78,7 @@ class EggHatchEvent(
         val chosen = possibleCreatures.randomOrNull()
             ?: creatureData.getAllCreatures().random() // fallback
 
-        Log.d("EggHatchEvent", "Picked $rarity $type creature: ${chosen.name}")
+        //Log.d("EggHatchEvent", "Picked $rarity $type creature: ${chosen.name}")
 
         return chosen.copy(rarity = rarity)
     }

@@ -19,8 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.eggventure.ui.components.TopBar
-import com.example.eggventure.viewmodel.StatsViewModel
-import com.example.eggventure.viewmodel.StatsViewModelFactory
+import com.example.eggventure.viewmodel.stats.StatsViewModel
+import com.example.eggventure.viewmodel.stats.StatsViewModelFactory
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
