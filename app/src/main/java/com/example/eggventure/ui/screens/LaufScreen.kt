@@ -199,19 +199,9 @@ fun LaufScreen(
                             if (isTracking) {
                                 Log.d("LaufScreen", "Stopping step tracking")
                                 stepCounter.stopTracking()
-                                Toast.makeText(
-                                    context,
-                                    "Schrittzähler gestoppt",
-                                    Toast.LENGTH_SHORT
-                                ).show()
                             } else {
                                 Log.d("LaufScreen", "Starting step tracking")
                                 stepCounter.startTracking()
-                                Toast.makeText(
-                                    context,
-                                    "Schrittzähler gestartet",
-                                    Toast.LENGTH_SHORT
-                                ).show()
                             }
                         } else {
                             Toast.makeText(context, "Berechtigung benötigt", Toast.LENGTH_SHORT).show()
@@ -246,13 +236,6 @@ fun LaufScreen(
                     fontWeight = FontWeight.Bold,
                 )
 
-            }
-
-            eggHatched?.let {
-                if (it) {
-                    Toast.makeText(context, "Ei geschlüpft!", Toast.LENGTH_SHORT).show()
-                    // show screen with hatched creature and "fertig" button
-                }
             }
 
         }
