@@ -100,6 +100,7 @@ class StepCounter(
 
     override fun addFakeStep(fakeSteps: Int) {
         fakeStepOffset += fakeSteps
+        runSteps += fakeSteps
         hatchProgressSteps = (hatchProgressSteps + fakeSteps).coerceAtMost(hatchGoal)
 
         if (hatchProgressSteps >= hatchGoal) {
