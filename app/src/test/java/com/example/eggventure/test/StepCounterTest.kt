@@ -95,7 +95,7 @@ class StepCounterTest {
 
         Assert.assertFalse(viewModel.isTracking.value!!)
         verify { stepSensorManager.unregisterListener() }
-        coVerify { runPersistence.saveRun(any()) }
+        coVerify { runPersistence.saveRun(any(), any(), any()) }
     }
 
     @Test
@@ -287,7 +287,7 @@ class StepCounterTest {
         advanceUntilIdle()
 
         verify { stepSensorManager.unregisterListener() } // sollte trotzdem passieren
-        coVerify { runPersistence.saveRun(any()) }        // Run wird gespeichert
+        coVerify { runPersistence.saveRun(any(), any(), any()) }        // Run wird gespeichert
     }
 
     @Test
