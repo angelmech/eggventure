@@ -6,11 +6,11 @@ import com.example.eggventure.model.run.RunRepository
 class RunPersistence(
     private val runRepository: RunRepository
 ) {
-    suspend fun saveRun(steps: Int) {
+    suspend fun saveRun(steps: Int, duration: Long, date: Long) {
         val run = RunEntity(
             steps = steps,
-            duration = 0L,
-            date = System.currentTimeMillis(),
+            duration = duration,
+            date = date,
             averageSpeed = null,
             distanceMeters = null
         )

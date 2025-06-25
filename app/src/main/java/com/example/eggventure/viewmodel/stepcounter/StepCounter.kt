@@ -38,6 +38,7 @@ class StepCounter(
     private var runSteps: Int = 0
     private var fakeStepOffset: Int = 0
     private var initialTotalSteps: Int? = null
+    private var runStartTime: Long = 0L
 
     private val _currentLightLevel = MutableStateFlow<Float?>(null)
     val currentLightLevel: StateFlow<Float?> = _currentLightLevel
@@ -82,6 +83,7 @@ class StepCounter(
         if (_isTracking.value == true) return
         stepSensorManager.registerListener(this)
         runSteps = 0
+        runStartTime = System.currentTimeMillis()
         _isTracking.postValue(true)
         _eggHatched.postValue(false)
     }
@@ -91,7 +93,9 @@ class StepCounter(
         _isTracking.postValue(false)
 
         viewModelScope.launch {
-            runPersistence.saveRun(runSteps)
+            val runEndTime = System.currentTimeMillis()
+            val runDuration = runEndTime - runStartTime
+            runPersistence.saveRun(runSteps, runDuration, runStartTime)
             hatchId?.let { id ->
                 hatchProgressRepository.updateHatchProgress(id, hatchProgressSteps) }
         }
@@ -100,6 +104,7 @@ class StepCounter(
 
     override fun addFakeStep(fakeSteps: Int) {
         fakeStepOffset += fakeSteps
+        runSteps += fakeSteps
         hatchProgressSteps = (hatchProgressSteps + fakeSteps).coerceAtMost(hatchGoal)
 
         if (hatchProgressSteps >= hatchGoal) {
