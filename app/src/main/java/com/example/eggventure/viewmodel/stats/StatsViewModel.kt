@@ -22,9 +22,6 @@ class StatsViewModel(private val runRepository: RunRepository) : ViewModel() {
     private val _lastRun = MutableStateFlow<RunEntity?>(null)
     val lastRun: StateFlow<RunEntity?> = _lastRun
 
-    private val _weeklyAverageSteps = MutableStateFlow<Double>(0.0)
-    val weeklyAverageSteps: StateFlow<Double> = _weeklyAverageSteps
-
     private val _last7Runs = MutableStateFlow<List<RunEntity>>(emptyList())
     val last7Runs: StateFlow<List<RunEntity>> = _last7Runs
 
@@ -42,14 +39,6 @@ class StatsViewModel(private val runRepository: RunRepository) : ViewModel() {
             _last7Runs.value = runRepository.getLast7Runs()
             Log.d("StatsViewModel", "Last 7 runs retrieved: ${_last7Runs.value}")
         }
-
-        /*
-        viewModelScope.launch {
-            val weekAgo = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(7)
-            _weeklyAverageSteps.value = runRepository.getWeeklyAverage(weekAgo)
-        }
-
-         */
     }
 
     // Formatiert die Dauer zu hh:mm:ss
@@ -64,15 +53,5 @@ class StatsViewModel(private val runRepository: RunRepository) : ViewModel() {
     fun formatDate(timestamp: Long): String {
         val sdf = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
         return sdf.format(Date(timestamp))
-    }
-
-    // Formatiert die Distanz zu km (mit 2 Nachkommastellen)
-    fun formatDistanceKm(distanceMeters: Float?): String {
-        return distanceMeters?.let { String.format("%.2f km", it / 1000f) } ?: "N/A"
-    }
-
-    // Formatiert die Durchschnittsgeschwindigkeit zu km/h
-    fun formatAverageSpeed(averageSpeed: Float?): String {
-        return averageSpeed?.let { String.format("%.2f km/h", it) } ?: "N/A"
     }
 }
