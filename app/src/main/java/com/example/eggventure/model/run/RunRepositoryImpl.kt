@@ -22,4 +22,10 @@ class RunRepositoryImpl(private val runDao: RunDao) : RunRepository {
         Log.d("RunRepository", "Last run retrieved: $lastRun")
         return lastRun
     }
+
+    override suspend fun getLast7Runs(): List<RunEntity> {
+        val last7Runs = runDao.getLast7Runs()
+        Log.d("RunRepository", "Last 7 runs retrieved: $last7Runs")
+        return last7Runs
+    }
 }

@@ -26,4 +26,6 @@ interface RunRepository {
      * @return The last [RunEntity], or null if no runs are found.
      */
     suspend fun getLastRun(): RunEntity?
+
+    suspend fun getLast7Runs(): List<RunEntity>
 }

@@ -1,5 +1,6 @@
 package com.example.eggventure.viewmodel.stats
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.eggventure.model.run.RunEntity
@@ -24,6 +25,9 @@ class StatsViewModel(private val runRepository: RunRepository) : ViewModel() {
     private val _weeklyAverageSteps = MutableStateFlow<Double>(0.0)
     val weeklyAverageSteps: StateFlow<Double> = _weeklyAverageSteps
 
+    private val _last7Runs = MutableStateFlow<List<RunEntity>>(emptyList())
+    val last7Runs: StateFlow<List<RunEntity>> = _last7Runs
+
     init {
         viewModelScope.launch {
             runRepository.getAllRuns().collect { runs ->
@@ -33,6 +37,12 @@ class StatsViewModel(private val runRepository: RunRepository) : ViewModel() {
         viewModelScope.launch {
             _lastRun.value = runRepository.getLastRun()
         }
+
+        viewModelScope.launch {
+            _last7Runs.value = runRepository.getLast7Runs()
+            Log.d("StatsViewModel", "Last 7 runs retrieved: ${_last7Runs.value}")
+        }
+
         /*
         viewModelScope.launch {
             val weekAgo = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(7)

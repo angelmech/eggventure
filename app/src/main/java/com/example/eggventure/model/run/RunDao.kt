@@ -16,4 +16,7 @@ interface RunDao {
     // get the last run
     @Query("SELECT * FROM runs ORDER BY date DESC LIMIT 1")
     suspend fun getLastRun(): RunEntity?
+
+    @Query("SELECT * FROM runs ORDER BY date DESC LIMIT 7")
+    suspend fun getLast7Runs(): List<RunEntity>
 }
