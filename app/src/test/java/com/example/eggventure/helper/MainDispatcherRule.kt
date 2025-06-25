@@ -1,4 +1,4 @@
-package com.example.eggventure
+package com.example.eggventure.helper
 
 // MainDispatcherRule.kt
 import kotlinx.coroutines.Dispatchers

@@ -1,6 +1,8 @@
-package com.example.eggventure
+package com.example.eggventure.test
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.example.eggventure.helper.MainDispatcherRule
+import com.example.eggventure.helper.getOrAwaitValue
 import com.example.eggventure.model.hatchprogress.HatchProgressEntity
 import com.example.eggventure.model.hatchprogress.HatchProgressRepository
 import com.example.eggventure.utils.sensorutils.EnvironmentSensorManager
@@ -17,6 +19,11 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import org.junit.*
 import org.junit.rules.TestRule
 
+/**
+ * Unit tests for the StepCounter ViewModel.
+ *
+ * 21/21 passed
+ */
 @OptIn(ExperimentalCoroutinesApi::class)
 class StepCounterTest {
 
