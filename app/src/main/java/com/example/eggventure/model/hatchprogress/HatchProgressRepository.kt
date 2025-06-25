@@ -12,20 +12,6 @@ interface HatchProgressRepository {
     suspend fun insertProgress(progress: HatchProgressEntity)
 
     /**
-     * Retrieves the current accumulated steps for the ongoing hatch progress.
-     *
-     * @return The current number of steps, or null if no progress is found.
-     */
-    suspend fun getHatchProgressSteps(): Int?
-
-    /**
-     * Retrieves the target goal for the current hatch progress.
-     *
-     * @return The hatch goal, or null if no progress is found.
-     */
-    suspend fun getHatchGoal(): Int?
-
-    /**
      * Retrieves the most recent hatch progress entry.
      *
      * @return The last [HatchProgressEntity], or null if no progress is found.
