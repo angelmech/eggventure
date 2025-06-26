@@ -62,13 +62,14 @@ dependencies {
     implementation("androidx.room:room-ktx:2.6.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
 
+
+
     // Für Tests
-    testImplementation("junit:junit:4.13.2")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     testImplementation("io.mockk:mockk:1.13.10")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("io.mockk:mockk-android:1.13.9")
+    //androidTestImplementation("androidx.test.ext:junit:1.1.5")
 
 
     implementation("androidx.core:core-ktx:1.9.0")
