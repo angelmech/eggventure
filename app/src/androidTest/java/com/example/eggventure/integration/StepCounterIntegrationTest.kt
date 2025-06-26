@@ -15,7 +15,7 @@ import org.junit.*
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class StepCounterViewModelIntegrationTests {
+class StepCounterIntegrationTest {
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()

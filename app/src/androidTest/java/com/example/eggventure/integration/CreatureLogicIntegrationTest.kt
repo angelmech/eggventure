@@ -12,7 +12,7 @@ import org.junit.*
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class CreatureLogicIntegrationTests {
+class CreatureLogicIntegrationTest {
 
     private lateinit var logic: CreatureLogic
     private val hatchEvent = mockk<EggHatchEvent>()
