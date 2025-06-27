@@ -63,10 +63,28 @@ fun StatsScreen(navController: NavHostController) {
                         .fillMaxSize()
                         .padding(horizontal = 16.dp) // Horizontal padding for list items
                 ) {
-                    item{
+                    item {
+                        Text(
+                            text = "Deine letzten Läufe",
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontSize = 18.sp,
+                            modifier = Modifier.padding(top = 16.dp)
+                        )
+                    }
+
+                    item {
                         LastSevenRunsChart(
                             last7Runs = stats.last7Runs.collectAsState().value,
                             statsViewModel = stats
+                        )
+                    }
+
+                    item {
+                        Text(
+                            text = "Alle Läufe",
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontSize = 18.sp,
+                            modifier = Modifier.padding(top = 16.dp)
                         )
                     }
 
