@@ -58,13 +58,6 @@ fun StatsScreen(navController: NavHostController) {
         ) {
             // ---Hier Seiteninhalt einfügen---
             if (allRuns.value.isNotEmpty()) {
-
-                Text(
-                    text = "Total Runs: ${allRuns.value.size}",
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 18.sp,
-                )
-
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
