@@ -95,7 +95,6 @@ fun StatsScreen(navController: NavHostController) {
 
 @Composable
 fun LastSevenRunsChart(last7Runs: List<RunEntity>, statsViewModel: StatsViewModel) {
-
     if (last7Runs.isNotEmpty()) {
         val entries = ArrayList<BarEntry>()
         val labels = ArrayList<String>()
@@ -104,7 +103,7 @@ fun LastSevenRunsChart(last7Runs: List<RunEntity>, statsViewModel: StatsViewMode
 
         last7Runs.forEachIndexed { index, run ->
             entries.add(BarEntry(index.toFloat(), run.steps.toFloat()))
-            labels.add(statsViewModel.formatDate(run.date))
+            labels.add(statsViewModel.formatDate(run.date, true))
         }
 
         AndroidView(
@@ -158,13 +157,7 @@ fun LastSevenRunsChart(last7Runs: List<RunEntity>, statsViewModel: StatsViewMode
                 chart.invalidate() // Redraw the chart
             }
         )
-    } else {
-        Text(
-            text = "No runs recorded in the last 7 days to display a chart.",
-            color = MaterialTheme.colorScheme.onSurface
-        )
     }
-
 }
 
 @Composable

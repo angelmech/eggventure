@@ -50,8 +50,13 @@ class StatsViewModel(private val runRepository: RunRepository) : ViewModel() {
     }
 
     // Formatiert den Timestamp in ein lesbares Datum
-    fun formatDate(timestamp: Long): String {
-        val sdf = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
-        return sdf.format(Date(timestamp))
+    fun formatDate(timestamp: Long, dateOnly: Boolean = false): String {
+        if (dateOnly) {
+            val sdf = SimpleDateFormat("dd.MM", Locale.getDefault())
+            return sdf.format(Date(timestamp))
+        } else {
+            val sdf = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
+            return sdf.format(Date(timestamp))
+        }
     }
 }
