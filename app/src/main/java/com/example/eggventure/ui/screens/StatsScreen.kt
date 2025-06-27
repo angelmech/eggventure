@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -23,10 +24,20 @@ import com.example.eggventure.viewmodel.stats.StatsViewModel
 import com.example.eggventure.viewmodel.stats.StatsViewModelFactory
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import com.example.eggventure.model.run.RunEntity
+
+//MPAndroidChart
+import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,7 +57,6 @@ fun StatsScreen(navController: NavHostController) {
                 .padding(top = innerPadding.calculateTopPadding())
         ) {
             // ---Hier Seiteninhalt einfügen---
-
             if (allRuns.value.isNotEmpty()) {
 
                 Text(
@@ -60,6 +70,13 @@ fun StatsScreen(navController: NavHostController) {
                         .fillMaxSize()
                         .padding(horizontal = 16.dp) // Horizontal padding for list items
                 ) {
+                    item{
+                        LastSevenRunsChart(
+                            last7Runs = stats.last7Runs.collectAsState().value,
+                            statsViewModel = stats
+                        )
+                    }
+
                     items(allRuns.value) { run ->
                         RunListItem(
                             run = run,
@@ -81,6 +98,80 @@ fun StatsScreen(navController: NavHostController) {
             }
         }
     }
+}
+
+@Composable
+fun LastSevenRunsChart(last7Runs: List<RunEntity>, statsViewModel: StatsViewModel) {
+
+    if (last7Runs.isNotEmpty()) {
+        val entries = ArrayList<BarEntry>()
+        val labels = ArrayList<String>()
+        val primaryColor = MaterialTheme.colorScheme.primary.toArgb()
+        val onSurfaceColor = MaterialTheme.colorScheme.onSurface.toArgb()
+
+        last7Runs.forEachIndexed { index, run ->
+            entries.add(BarEntry(index.toFloat(), run.steps.toFloat()))
+            labels.add(statsViewModel.formatDate(run.date))
+        }
+
+        AndroidView(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(250.dp)
+                .padding(vertical = 8.dp),
+            factory = { context ->
+                BarChart(context).apply {
+                    // chart setup
+                    description.isEnabled = false
+                    legend.isEnabled = false
+                    setFitBars(true)
+                    setTouchEnabled(false)
+
+                    // X-Axis setup
+                    xAxis.apply {
+                        valueFormatter = IndexAxisValueFormatter(labels) // Set custom labels
+                        position = XAxis.XAxisPosition.BOTTOM
+                        setDrawGridLines(false) // No vertical grid lines
+                        setDrawAxisLine(true) // Draw X-axis line
+                        granularity = 1f // Minimum interval between values
+                        textColor = onSurfaceColor
+                        textSize = 10f
+                    }
+
+                    // Left Y-Axis setup
+                    axisLeft.apply {
+                        axisMinimum = 0f // Start from 0
+                        setDrawGridLines(true) // Draw horizontal grid lines
+                        setDrawAxisLine(true) // Draw Y-axis line
+                        textColor = onSurfaceColor
+                        textSize = 10f
+
+                    }
+
+                    axisRight.isEnabled = false
+                }
+            },
+            update = { chart ->
+                // update when data changes
+                val dataSet = BarDataSet(entries, "Steps").apply {
+                    color = primaryColor
+                    valueTextSize = 12f // Size of value text above bars
+                    valueTextColor = onSurfaceColor
+                }
+
+                val barData = BarData(dataSet)
+                barData.barWidth = 0.5f
+                chart.data = barData
+                chart.invalidate() // Redraw the chart
+            }
+        )
+    } else {
+        Text(
+            text = "No runs recorded in the last 7 days to display a chart.",
+            color = MaterialTheme.colorScheme.onSurface
+        )
+    }
+
 }
 
 @Composable
