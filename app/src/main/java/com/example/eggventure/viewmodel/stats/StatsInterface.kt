@@ -20,16 +20,10 @@ interface StatsInterface {
     val lastRun: StateFlow<RunEntity?>
 
     /**
-     * Retrieves the average steps taken per week.
-     * @return A StateFlow emitting the average number of steps as a Double.
+     * Retrieves the last 7 recorded runs.
+     * @return A StateFlow emitting a list of the last 7 RunEntity objects.
      */
-    val weeklyAverageSteps: StateFlow<Double>
-
-    /**
-     * Retrieves the average distance covered per week.
-     * @return A StateFlow emitting the average distance as a Double.
-     */
-    val weeklyAverageDistance: StateFlow<Double>
+    val last7Runs: StateFlow<List<RunEntity>>
 
     /**
      * Formats the duration from milliseconds into a human-readable format (hh:mm:ss).
@@ -39,16 +33,10 @@ interface StatsInterface {
     fun formatDuration(durationMillis: Long): String
 
     /**
-     * Formats the distance from meters into kilometers with two decimal places.
-     * @param distanceMeters The distance in meters.
-     * @return A formatted string representing the distance in kilometers.
+     * Formats the timestamp into a readable date string.
+     * @param timestamp The timestamp in milliseconds.
+     * @param dateOnly Whether to only include the date (default: false).
      */
-    fun formatDistanceKm(distanceMeters: Float?): String
+    fun formatDate(timestamp: Long, dateOnly: Boolean = false): String
 
-    /**
-     * Formats the average speed into kilometers per hour with two decimal places.
-     * @param averageSpeed The average speed.
-     * @return A formatted string representing the average speed in kilometers per hour.
-     */
-    fun formatAverageSpeed(averageSpeed: Float?): String
 }
