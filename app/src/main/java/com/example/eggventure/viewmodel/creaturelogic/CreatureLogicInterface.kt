@@ -8,8 +8,6 @@ import kotlinx.coroutines.flow.StateFlow
  * Interface for managing the logic related to creatures in the application.
  */
 interface CreatureLogicInterface {
-
-
     /**
      * sorts list of owned creatures sorted by rarity.
      */
@@ -29,7 +27,6 @@ interface CreatureLogicInterface {
      * Resets the sorting of creatures to the default order.
      */
     fun resetSort()
-
 
     /**
      * Initiates the hatching process for a creature.

@@ -2,7 +2,7 @@ package com.example.eggventure.test
 
 import com.example.eggventure.model.run.RunEntity
 import com.example.eggventure.model.run.RunRepository
-import com.example.eggventure.viewmodel.stats.StatsViewModel
+import com.example.eggventure.viewmodel.stats.Stats
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +21,7 @@ import org.junit.Test
 class StatsTest {
 
     private val runRepository = mockk<RunRepository>()
-    private lateinit var viewModel: StatsViewModel
+    private lateinit var viewModel: Stats
 
     private val testRuns = listOf(
         RunEntity(1, 1000, 2000, 5000, null, null),
@@ -36,7 +36,7 @@ class StatsTest {
         coEvery { runRepository.getLastRun() } returns testRuns.last()
         coEvery { runRepository.getLast7Runs() } returns testRuns
 
-        viewModel = StatsViewModel(runRepository)
+        viewModel = Stats(runRepository)
     }
 
     @Test

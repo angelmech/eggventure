@@ -7,6 +7,10 @@ import com.example.eggventure.utils.DependencyProvider
 
 /**
  * Factory class for creating instances of [StepCounter].
+ *
+ * This factory is responsible for providing the necessary dependencies to the StepCounter ViewModel.
+ *
+ * @property context The application context used to access resources and services.
  */
 class StepCounterFactory(
     private val context: Context

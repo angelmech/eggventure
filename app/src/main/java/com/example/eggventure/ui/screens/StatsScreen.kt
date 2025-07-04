@@ -20,8 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.eggventure.ui.components.TopBar
-import com.example.eggventure.viewmodel.stats.StatsViewModel
-import com.example.eggventure.viewmodel.stats.StatsViewModelFactory
+import com.example.eggventure.viewmodel.stats.Stats
+import com.example.eggventure.viewmodel.stats.StatsFactory
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.toArgb
@@ -44,7 +44,7 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 @Composable
 fun StatsScreen(navController: NavHostController) {
     val context = LocalContext.current
-    val stats: StatsViewModel = viewModel(factory = StatsViewModelFactory(context))
+    val stats: Stats = viewModel(factory = StatsFactory(context))
 
     val allRuns = stats.allRuns.collectAsState()
 
@@ -56,12 +56,11 @@ fun StatsScreen(navController: NavHostController) {
                 .fillMaxSize()
                 .padding(top = innerPadding.calculateTopPadding())
         ) {
-            // ---Hier Seiteninhalt einfügen---
             if (allRuns.value.isNotEmpty()) {
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 16.dp) // Horizontal padding for list items
+                        .padding(horizontal = 16.dp)
                 ) {
                     item {
                         Text(
@@ -112,7 +111,7 @@ fun StatsScreen(navController: NavHostController) {
 }
 
 @Composable
-fun LastSevenRunsChart(last7Runs: List<RunEntity>, statsViewModel: StatsViewModel) {
+fun LastSevenRunsChart(last7Runs: List<RunEntity>, statsViewModel: Stats) {
     if (last7Runs.isNotEmpty()) {
         val entries = ArrayList<BarEntry>()
         val labels = ArrayList<String>()
@@ -179,7 +178,7 @@ fun LastSevenRunsChart(last7Runs: List<RunEntity>, statsViewModel: StatsViewMode
 }
 
 @Composable
-fun RunListItem(run: RunEntity, statsViewModel: StatsViewModel) {
+fun RunListItem(run: RunEntity, statsViewModel: Stats) {
     Card(
         modifier = Modifier
             .fillMaxWidth()

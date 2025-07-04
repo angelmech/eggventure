@@ -17,7 +17,7 @@ import com.example.eggventure.utils.sensorutils.StepSensorManagerImpl
 import com.example.eggventure.viewmodel.creaturelogic.CreatureLogic
 import com.example.eggventure.viewmodel.creaturelogic.CreatureLogicInterface
 import com.example.eggventure.viewmodel.creaturelogic.EggHatchEvent
-import com.example.eggventure.viewmodel.stats.StatsViewModel
+import com.example.eggventure.viewmodel.stats.Stats
 import com.example.eggventure.viewmodel.stepcounter.RunPersistence
 import com.example.eggventure.viewmodel.stepcounter.StepCounter
 import com.example.eggventure.viewmodel.stepcounter.StepCounterInterface
@@ -92,7 +92,7 @@ object DependencyProvider {
         )
     }
 
-    fun provideStats(context: Context): StatsViewModel { //TODO MOVE TO INTERFACE ::)
-        return StatsViewModel(provideRunRepository(context))
+    fun provideStats(context: Context): Stats { //TODO MOVE TO INTERFACE ::)
+        return Stats(provideRunRepository(context))
     }
 }

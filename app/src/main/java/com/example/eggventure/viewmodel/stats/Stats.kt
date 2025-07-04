@@ -14,7 +14,7 @@ import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 
-class StatsViewModel(private val runRepository: RunRepository) : ViewModel() {
+class Stats(private val runRepository: RunRepository) : ViewModel() {
 
     private val _allRuns = MutableStateFlow<List<RunEntity>>(emptyList())
     val allRuns: StateFlow<List<RunEntity>> = _allRuns

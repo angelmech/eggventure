@@ -5,7 +5,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.eggventure.utils.DependencyProvider
 
-class StatsViewModelFactory(
+/**
+ * Factory class for creating instances of [StatsViewModel].
+ *
+ * This factory is responsible for providing the necessary dependencies to the StatsViewModel.
+ *
+ * @property context The application context used to access resources and services.
+ */
+class StatsFactory(
     private val context: Context
 ) : ViewModelProvider.Factory {
 
