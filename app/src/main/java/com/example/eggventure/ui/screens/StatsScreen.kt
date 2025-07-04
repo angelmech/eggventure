@@ -1,5 +1,10 @@
 package com.example.eggventure.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -8,8 +13,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,6 +38,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.eggventure.model.run.RunEntity
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.remember
+import kotlinx.coroutines.launch
 
 //MPAndroidChart
 import com.github.mikephil.charting.charts.BarChart
@@ -45,67 +62,99 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 fun StatsScreen(navController: NavHostController) {
     val context = LocalContext.current
     val stats: Stats = viewModel(factory = StatsFactory(context))
-
     val allRuns = stats.allRuns.collectAsState()
+
+    val listState = rememberLazyListState()
+    val showScrollToTop by remember {
+        derivedStateOf {
+            listState.firstVisibleItemScrollOffset > 200 || listState.firstVisibleItemIndex > 0
+        }
+    }
+
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         topBar = { TopBar(title = "Stats") }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = innerPadding.calculateTopPadding())
-        ) {
-            if (allRuns.value.isNotEmpty()) {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp)
-                ) {
-                    item {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = innerPadding.calculateTopPadding())
+            ) {
+                if (allRuns.value.isNotEmpty()) {
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        item {
+                            Text(
+                                text = "Deine letzten Läufe",
+                                color = MaterialTheme.colorScheme.onSurface,
+                                fontSize = 18.sp,
+                                modifier = Modifier.padding(top = 16.dp)
+                            )
+                        }
+
+                        item {
+                            LastSevenRunsChart(
+                                last7Runs = stats.last7Runs.collectAsState().value,
+                                statsViewModel = stats
+                            )
+                        }
+
+                        item {
+                            Text(
+                                text = "Alle Läufe",
+                                color = MaterialTheme.colorScheme.onSurface,
+                                fontSize = 18.sp,
+                                modifier = Modifier.padding(top = 16.dp)
+                            )
+                        }
+
+                        items(allRuns.value) { run ->
+                            RunListItem(
+                                run = run,
+                                statsViewModel = stats
+                            )
+                        }
+                    }
+                } else {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
                         Text(
-                            text = "Deine letzten Läufe",
+                            text = "Deine Läufe werden hier angezeigt",
                             color = MaterialTheme.colorScheme.onSurface,
-                            fontSize = 18.sp,
-                            modifier = Modifier.padding(top = 16.dp)
-                        )
-                    }
-
-                    item {
-                        LastSevenRunsChart(
-                            last7Runs = stats.last7Runs.collectAsState().value,
-                            statsViewModel = stats
-                        )
-                    }
-
-                    item {
-                        Text(
-                            text = "Alle Läufe",
-                            color = MaterialTheme.colorScheme.onSurface,
-                            fontSize = 18.sp,
-                            modifier = Modifier.padding(top = 16.dp)
-                        )
-                    }
-
-                    items(allRuns.value) { run ->
-                        RunListItem(
-                            run = run,
-                            statsViewModel = stats
                         )
                     }
                 }
-            } else {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "Deine Läufe werden hier angezeigt",
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                }
-
             }
+
+            AnimatedVisibility(
+                visible = showScrollToTop,
+                enter = fadeIn() + scaleIn(),
+                exit = fadeOut() + scaleOut(),
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 24.dp)
+            ) {
+                FloatingActionButton(
+                    onClick = {
+                        scope.launch {
+                            listState.animateScrollToItem(0)
+                        }
+                    },
+                    modifier = Modifier.size(48.dp),
+                    shape = CircleShape
+                ) {
+                    Icon(Icons.Default.ArrowUpward, contentDescription = "Nach oben")
+                }
+            }
+
         }
     }
 }
