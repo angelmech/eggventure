@@ -5,10 +5,13 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -42,10 +45,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.DirectionsWalk
+import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material3.Divider
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.vector.ImageVector
 import kotlinx.coroutines.launch
 
 //MPAndroidChart
@@ -92,9 +99,11 @@ fun StatsScreen(navController: NavHostController) {
                         item {
                             Text(
                                 text = "Deine letzten Läufe",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold,
                                 color = MaterialTheme.colorScheme.onSurface,
-                                fontSize = 18.sp,
-                                modifier = Modifier.padding(top = 16.dp)
+                                modifier = Modifier
+                                    .padding(top = 24.dp, bottom = 8.dp)
                             )
                         }
 
@@ -105,14 +114,15 @@ fun StatsScreen(navController: NavHostController) {
                             )
                         }
 
+                        //small spacer for better visual separation
                         item {
-                            Text(
-                                text = "Alle Läufe",
-                                color = MaterialTheme.colorScheme.onSurface,
-                                fontSize = 18.sp,
-                                modifier = Modifier.padding(top = 16.dp)
-                            )
+                            Spacer(modifier = Modifier.height(8.dp))
                         }
+
+                        item {
+                            SectionDivider("Alle Läufe")
+                        }
+
 
                         items(allRuns.value) { run ->
                             RunListItem(
@@ -227,20 +237,92 @@ fun LastSevenRunsChart(last7Runs: List<RunEntity>, statsViewModel: Stats) {
 }
 
 @Composable
+fun SectionDivider(text: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp)
+    ) {
+        Divider(modifier = Modifier.weight(1f))
+        Text(
+            text = text,
+            modifier = Modifier.padding(horizontal = 8.dp),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        Divider(modifier = Modifier.weight(1f))
+    }
+}
+
+
+@Composable
 fun RunListItem(run: RunEntity, statsViewModel: Stats) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        //elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-    ){
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        shape = MaterialTheme.shapes.medium
+    ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = "Lauf ${run.id}", fontWeight = FontWeight.Bold)
-            Text(text = "Datum: ${statsViewModel.formatDate(run.date)}")
-            Text(text = "Schritte: ${run.steps}")
-            Text(text = "Dauer: ${statsViewModel.formatDuration(run.duration)}")
+            // Title
+            Text(
+                text = "Lauf #${run.id}",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            // Date
+            Text(
+                text = statsViewModel.formatDate(run.date),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 4.dp, bottom = 8.dp)
+            )
+
+            // Stats Row
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                StatItem(
+                    icon = Icons.Default.DirectionsWalk,
+                    label = "Schritte",
+                    value = "${run.steps}"
+                )
+                StatItem(
+                    icon = Icons.Default.Timer,
+                    label = "Dauer",
+                    value = statsViewModel.formatDuration(run.duration)
+                )
+            }
         }
     }
 }
+
+@Composable
+fun StatItem(icon: ImageVector, label: String, value: String) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+            icon,
+            contentDescription = label,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(20.dp)
+        )
+        Column(modifier = Modifier.padding(start = 8.dp)) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium
+            )
+        }
+    }
+}
+
+
 
