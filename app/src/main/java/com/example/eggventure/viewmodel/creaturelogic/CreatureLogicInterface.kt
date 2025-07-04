@@ -16,6 +16,16 @@ interface CreatureLogicInterface {
     fun toggleSortByRarity()
 
     /**
+     * sorts list of owned creatures sorted by name.
+     */
+    fun toggleSortByName()
+
+    /**
+     * sorts list of owned creatures sorted by type.
+     */
+    fun toggleSortByType()
+
+    /**
      * Resets the sorting of creatures to the default order.
      */
     fun resetSort()

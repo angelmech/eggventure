@@ -157,7 +157,7 @@ fun FloatingSortMenu(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(end = 10.dp, bottom = 10.dp),
+            .padding(end = 10.dp),
         contentAlignment = Alignment.BottomEnd
     ) {
         Card(
@@ -199,7 +199,7 @@ fun FloatingSortMenu(
                             }
                             Divider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f), thickness = 1.dp)
 
-                            SortMenuItem("Datum", MaterialTheme.colorScheme.onSurface) {
+                            SortMenuItem("Datum (default)", MaterialTheme.colorScheme.onSurface) {
                                 onReset()
                                 onToggle()
                             }

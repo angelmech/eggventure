@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.asStateFlow
 enum class CreatureSortMode {
     DEFAULT, // by date
     BY_RARITY,
-    // BY_NAME
-
+    BY_TYPE,
+    BY_NAME
 }
 
 class CreatureSortManager {
@@ -24,6 +24,22 @@ class CreatureSortManager {
         }
     }
 
+    fun toggleNameSort() {
+        _sortMode.value = if (_sortMode.value == CreatureSortMode.BY_NAME) {
+            CreatureSortMode.DEFAULT
+        } else {
+            CreatureSortMode.BY_NAME
+        }
+    }
+
+    fun toggleTypeSort() {
+        _sortMode.value = if (_sortMode.value == CreatureSortMode.BY_TYPE) {
+            CreatureSortMode.DEFAULT
+        } else {
+            CreatureSortMode.BY_TYPE
+        }
+    }
+
     fun resetSort() {
         _sortMode.value = CreatureSortMode.DEFAULT
     }
@@ -31,6 +47,8 @@ class CreatureSortManager {
     fun sort(creatures: List<CreatureEntity>): List<CreatureEntity> {
         return when (_sortMode.value) {
             CreatureSortMode.BY_RARITY -> creatures.sortedBy { it.rarity }
+            CreatureSortMode.BY_NAME -> creatures.sortedBy { it.creatureName }
+            CreatureSortMode.BY_TYPE -> creatures.sortedBy { it.type.name }
             CreatureSortMode.DEFAULT -> creatures
         }
     }

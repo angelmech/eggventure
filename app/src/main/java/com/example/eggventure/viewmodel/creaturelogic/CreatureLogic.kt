@@ -68,4 +68,13 @@ class CreatureLogic(
     override fun resetSort() {
         sortManager.resetSort()
     }
+
+    override fun toggleSortByName() {
+        sortManager.toggleNameSort()
+    }
+
+    override fun toggleSortByType() {
+        sortManager.toggleTypeSort()
+    }
+
 }
