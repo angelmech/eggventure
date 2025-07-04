@@ -13,16 +13,17 @@ data class Creature(
 
 object CreatureDatabase : CreatureDataInterface {
     private val allCreatures = listOf(
-        Creature(1, "Echoes", CreatureType.REGULAR, R.drawable.creature_stand1),
-        Creature(2, "D4C", CreatureType.SHADOW, R.drawable.creature_stand2),
-        Creature(3, "SCR", CreatureType.SHADOW, R.drawable.creature_stand3),
-        Creature(4, "Killer Queen", CreatureType.RADIANT, R.drawable.creature_stand4),
-        Creature(5, "Star Platinum", CreatureType.RADIANT, R.drawable.creature_stand5),
-        Creature(6, "GER", CreatureType.REGULAR, R.drawable.creature_stand6),
-        Creature(7, "Weather Report", CreatureType.RADIANT, R.drawable.creature_stand7),
-        Creature(8, "The World", CreatureType.REGULAR, R.drawable.creature_stand8),
-        Creature(9, "Chariot Baby", CreatureType.SHADOW, R.drawable.creature_stand9),
-        Creature(10, "Heavens Door", CreatureType.RADIANT, R.drawable.creature_stand10),
+        Creature(1, "Chromastone", CreatureType.RADIANT, R.drawable.radiant1),
+        Creature(2, "Heatblast", CreatureType.RADIANT, R.drawable.radiant2),
+        Creature(3, "Feedback", CreatureType.RADIANT, R.drawable.radiant3),
+        Creature(4, "XLR8", CreatureType.SHADOW, R.drawable.sh4),
+        Creature(5, "Upgrade", CreatureType.SHADOW, R.drawable.sh3),
+        Creature(6, "Allen X", CreatureType.SHADOW, R.drawable.sh2),
+        Creature(7, "Goop", CreatureType.SHADOW, R.drawable.sh1),
+        Creature(8, "Diamondhead", CreatureType.REGULAR, R.drawable.r1),
+        Creature(9, "Swampfire", CreatureType.REGULAR, R.drawable.r2),
+        Creature(10, "Lodestar", CreatureType.REGULAR, R.drawable.r3),
+
     )
 
     override fun getAllCreatures() = allCreatures
