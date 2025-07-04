@@ -1,16 +1,18 @@
 package com.example.eggventure.ui.screens
 
-import androidx.compose.foundation.background
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
+import androidx.compose.animation.with
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -18,30 +20,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Sort
-import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.navigation.NavHostController
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.example.eggventure.model.creature.CreatureEntity
 import com.example.eggventure.ui.components.CreatureCard
 import com.example.eggventure.ui.components.TopBar
@@ -51,64 +40,25 @@ import com.example.eggventure.viewmodel.creaturelogic.CreatureLogicFactory
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SammlungScreen(navController: NavHostController) {
-
     val context = LocalContext.current
     val creatureLogic: CreatureLogic = viewModel(factory = CreatureLogicFactory(context))
     val creatures by creatureLogic.creatures.collectAsState()
     var expanded by remember { mutableStateOf(false) }
     val selectedCreature = remember { mutableStateOf<CreatureEntity?>(null) }
 
-
     Scaffold(
-        topBar = { TopBar(
-            title = "Sammlung",
-        ) },
+        topBar = {
+            TopBar(title = "Sammlung")
+        },
         floatingActionButton = {
-            Column(horizontalAlignment = Alignment.End) {
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.background)
-                        .clip(RoundedCornerShape(16.dp))
-                ) {
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                "Seltenheit",
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        },
-                        onClick = {
-                            creatureLogic.toggleSortByRarity()
-                            expanded = false
-                        }
-                    )
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                "Datum",
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        },
-                        onClick = {
-                            creatureLogic.resetSort()
-                            expanded = false
-                        }
-                    )
-                }
-                Spacer(modifier = Modifier.padding(4.dp))
-                FloatingActionButton(
-                    onClick = { expanded = !expanded },
-                    containerColor = MaterialTheme.colorScheme.primary
-                ) {
-                    Icon(
-                        imageVector = if (expanded) Icons.Filled.Close else Icons.Filled.Sort,
-                        contentDescription = "Menu",
-                        tint = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            }
+            FloatingSortMenu(
+                expanded = expanded,
+                onToggle = { expanded = !expanded },
+                onSortByRarity = { creatureLogic.toggleSortByRarity() },
+                onSortByType = { creatureLogic.toggleSortByType() },
+                onSortByName = { creatureLogic.toggleSortByName() },
+                onReset = { creatureLogic.resetSort() }
+            )
         }
     ) { innerPadding ->
         LazyVerticalGrid(
@@ -150,9 +100,11 @@ fun SammlungScreen(navController: NavHostController) {
                                 )
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Button(onClick = { selectedCreature.value = null }) {
-                                    Text(
-                                        text = "Abbrechen",
-                                        color = MaterialTheme.colorScheme.onSurface)
+                                    Icon(
+                                        imageVector = Icons.Filled.Close,
+                                        contentDescription = "Schließen",
+                                        tint = MaterialTheme.colorScheme.onSurface
+                                    )
                                 }
                             }
                         }
@@ -162,3 +114,137 @@ fun SammlungScreen(navController: NavHostController) {
         }
     }
 }
+
+@Composable
+fun SortMenuItem(
+    label: String,
+    textColor: Color,
+    onClick: () -> Unit
+) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp)) // Rounded edges for nice effect
+            .clickable(onClick = onClick),
+        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f), // Subtle feedback color
+        tonalElevation = 0.dp
+    ) {
+        Text(
+            text = label,
+            color = textColor,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier
+                .padding(horizontal = 12.dp, vertical = 8.dp)
+        )
+    }
+}
+
+
+
+@Composable
+fun FloatingSortMenu(
+    expanded: Boolean,
+    onToggle: () -> Unit,
+    onSortByRarity: () -> Unit,
+    onSortByType: () -> Unit,
+    onSortByName: () -> Unit,
+    onReset: () -> Unit
+) {
+    // Animate width based on expansion state
+    val targetWidth = if (expanded) 140.dp else 56.dp
+    val cardWidth by animateDpAsState(targetValue = targetWidth, label = "CardWidthAnimation")
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(end = 10.dp, bottom = 10.dp),
+        contentAlignment = Alignment.BottomEnd
+    ) {
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            elevation = CardDefaults.cardElevation(8.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
+            modifier = Modifier.width(cardWidth)
+        ) {
+            Box(
+                modifier = Modifier.padding(8.dp),
+                contentAlignment = Alignment.BottomEnd
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.End,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    AnimatedVisibility(visible = expanded) {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(4.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp)
+                        ) {
+                            SortMenuItem("Seltenheit", MaterialTheme.colorScheme.onSurface) {
+                                onSortByRarity()
+                                onToggle()
+                            }
+                            Divider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f), thickness = 1.dp)
+
+                            SortMenuItem("Typ", MaterialTheme.colorScheme.onSurface) {
+                                onSortByType()
+                                onToggle()
+                            }
+                            Divider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f), thickness = 1.dp)
+
+                            SortMenuItem("Name", MaterialTheme.colorScheme.onSurface) {
+                                onSortByName()
+                                onToggle()
+                            }
+                            Divider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f), thickness = 1.dp)
+
+                            SortMenuItem("Datum", MaterialTheme.colorScheme.onSurface) {
+                                onReset()
+                                onToggle()
+                            }
+                        }
+                    }
+
+
+                    // Button inside a fixed-size box so it doesn't move
+                    Box(
+                        modifier = Modifier
+                            .size(44.dp)
+                            .align(Alignment.End)
+                    ) {
+                        FloatingActionButton(
+                            onClick = onToggle,
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            elevation = FloatingActionButtonDefaults.elevation(
+                                defaultElevation = 0.dp,
+                                pressedElevation = 0.dp,
+                                hoveredElevation = 0.dp,
+                                focusedElevation = 0.dp,
+                            ),
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            AnimatedContent(
+                                targetState = expanded,
+                                transitionSpec = { fadeIn() togetherWith fadeOut() },
+                                label = "FABIconChange"
+                            ) { isExpanded ->
+                                Icon(
+                                    imageVector = if (isExpanded) Icons.Filled.Close else Icons.Filled.Sort,
+                                    contentDescription = if (isExpanded) "Schließen" else "Sortieren",
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+

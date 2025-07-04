@@ -149,10 +149,11 @@ fun LaufScreen(
             }
 
             Text(
-                text = "Kreaturarten basieren auf Lichtstärke",
-                fontSize = 10.sp,
+                text = "Hinweis: Helligkeit bestimmt den Kreaturentyp!",
+                fontSize = 12.sp,
                 color = Color.Gray,
                 lineHeight = 14.sp,
+                modifier = Modifier.padding(bottom = 8.dp)
             )
 
 
