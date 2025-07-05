@@ -32,16 +32,16 @@ class StepCounter(
     private val _eggHatched = MutableLiveData(false)
     override val eggHatched: LiveData<Boolean> = _eggHatched
 
+    private val _currentLightLevel = MutableStateFlow<Float?>(null)
+    val currentLightLevel: StateFlow<Float?> = _currentLightLevel
+
     private var hatchId: Int? = null
     private var hatchGoal: Int = 5000
     private var hatchProgressSteps: Int = 0
     private var runSteps: Int = 0
-    private var fakeStepOffset: Int = 0
-    private var initialTotalSteps: Int? = null
+    private var lastSensorSteps: Int? = null
     private var runStartTime: Long = 0L
 
-    private val _currentLightLevel = MutableStateFlow<Float?>(null)
-    val currentLightLevel: StateFlow<Float?> = _currentLightLevel
 
     init {
         viewModelScope.launch {
@@ -51,6 +51,8 @@ class StepCounter(
         }
     }
 
+    //-------------------------initializations--------------------------------
+
     override fun initProgress() {
         viewModelScope.launch {
             try {
@@ -59,123 +61,62 @@ class StepCounter(
                     hatchId = lastProgress.id
                     hatchProgressSteps = lastProgress.hatchProgressSteps
                     hatchGoal = lastProgress.hatchGoal
-                    _stepCount.postValue(hatchProgressSteps)
                 } else {
                     val newProgress = HatchProgressEntity(
                         hatchProgressSteps = 0,
                         hatchGoal = hatchGoal
                     )
                     hatchProgressRepository.insertProgress(newProgress)
-                    val freshProgress = hatchProgressRepository.getLastHatchProgress()
-                    hatchId = freshProgress?.id
-                    hatchProgressSteps = freshProgress?.hatchProgressSteps ?: 0
-                    hatchGoal = freshProgress?.hatchGoal ?: hatchGoal
-                    _stepCount.postValue(hatchProgressSteps)
+                    val fresh = hatchProgressRepository.getLastHatchProgress()
+                    hatchId = fresh?.id
+                    hatchProgressSteps = fresh?.hatchProgressSteps ?: 0
+                    hatchGoal = fresh?.hatchGoal ?: hatchGoal
                 }
+                _stepCount.postValue(hatchProgressSteps)
             } catch (e: Exception) {
                 _stepCount.postValue(0)
-                // Optional: Logging oder Fehlerstatus setzen
+                Log.e("StepCounter", "Error initializing progress: ${e.message}")
             }
         }
     }
 
     override fun startTracking() {
         if (_isTracking.value == true) return
-        stepSensorManager.registerListener(this)
+
         runSteps = 0
+        lastSensorSteps = null
         runStartTime = System.currentTimeMillis()
-        _isTracking.postValue(true)
+
         _eggHatched.postValue(false)
+        _stepCount.postValue(hatchProgressSteps)
+        stepSensorManager.registerListener(this)
+        _isTracking.postValue(true)
     }
 
     override fun stopTracking() {
         stepSensorManager.unregisterListener()
         _isTracking.postValue(false)
 
+        val runDuration = System.currentTimeMillis() - runStartTime
         viewModelScope.launch {
-            val runEndTime = System.currentTimeMillis()
-            val runDuration = runEndTime - runStartTime
             runPersistence.saveRun(runSteps, runDuration, runStartTime)
-            hatchId?.let { id ->
-                hatchProgressRepository.updateHatchProgress(id, hatchProgressSteps) }
+            hatchId?.let { hatchProgressRepository.updateHatchProgress(it, hatchProgressSteps) }
         }
     }
 
+    //-------------------------Step count logic--------------------------------
 
     override fun addFakeStep(fakeSteps: Int) {
-        fakeStepOffset += fakeSteps
         runSteps += fakeSteps
-        hatchProgressSteps = (hatchProgressSteps + fakeSteps).coerceAtMost(hatchGoal)
+        hatchProgressSteps += fakeSteps
 
+        var overflow = 0
         if (hatchProgressSteps >= hatchGoal) {
-            val stepsAtHatch = initialTotalSteps?.plus(runSteps) ?: runSteps
-            startEggHatchEvent(stepsAtHatch)
-        } else {
-            _stepCount.postValue(hatchProgressSteps)
-            viewModelScope.launch {
-                hatchId?.let { id ->
-                    hatchProgressRepository.updateHatchProgress(id, hatchProgressSteps)
-                }
-            }
-        }
-    }
-
-    /* * Starts the egg hatch event if the progress reaches the goal.
-     * This function is called when the step count reaches or exceeds the hatch goal.
-     */
-    private fun startEggHatchEvent(totalSteps: Int) {
-        viewModelScope.launch {
-            hatchId?.let { id ->
-                //val hatched = hatchEvent.processHatch(id, hatchProgressSteps, hatchGoal)
-                // call the creatureLogic viewmodel to handle the egg hatch logic
-                val hatched = creatureLogic.hatchCreature(
-                    id,
-                    totalSteps,
-                    hatchProgressSteps,
-                    hatchGoal,
-                    _currentLightLevel.value ?: 0f)
-                if (hatched) {
-                    hatchProgressSteps = 0
-                    fakeStepOffset = 0
-                    initialTotalSteps = totalSteps
-                    _stepCount.postValue(0)
-                    _eggHatched.postValue(true)
-                    //Log.d("StepCounter", "Egg hatched! Progress reset.")
-                } else {
-                    // Hatch nicht erfolgt, aber Fortschritt max auf hatchGoal setzen
-                    _stepCount.postValue(hatchProgressSteps.coerceAtMost(hatchGoal))
-                }
-            }
-        }
-    }
-
-    /**
-     * Handles the step sensor data change.
-     * This function is called when the step sensor detects a change in step count.
-     *
-     * @param data The StepSensorData containing the total steps.
-     */
-    fun onStepSensorDataChanged(data: StepSensorData) {
-        val totalSteps = data.totalSteps
-
-        if (initialTotalSteps == null) {
-            initialTotalSteps = totalSteps - hatchProgressSteps
-            //Log.d("StepCounter", "Initial total steps set to $initialTotalSteps")
+            overflow = hatchProgressSteps - hatchGoal
+            hatchProgressSteps = hatchGoal
         }
 
-        //Log.d("StepCounter", "step")
-
-        val realSteps = totalSteps - (initialTotalSteps ?: totalSteps)
-        runSteps = realSteps
-
-        val combinedSteps = realSteps + fakeStepOffset
-        hatchProgressSteps = combinedSteps.coerceIn(0, hatchGoal)
-
-        _stepCount.postValue(hatchProgressSteps)
-
-        if (hatchProgressSteps >= hatchGoal) {
-            startEggHatchEvent(totalSteps)
-        }
+        checkHatchCondition(overflow)
     }
 
     /**
@@ -188,6 +129,71 @@ class StepCounter(
         if (event?.sensor?.type == Sensor.TYPE_STEP_COUNTER) {
             val totalSteps = event.values[0].toInt()
             onStepSensorDataChanged(StepSensorData(totalSteps))
+        }
+    }
+
+    /**
+     * Handles the step sensor data change.
+     * This function is called when the step sensor detects a change in step count.
+     *
+     * @param data The StepSensorData containing the total steps.
+     */
+    fun onStepSensorDataChanged(data: StepSensorData) {
+        val totalSteps = data.totalSteps
+
+        // If first time, set the last sensor steps and exit
+        if (lastSensorSteps == null) {
+            lastSensorSteps = totalSteps
+            return
+        }
+
+        val delta = totalSteps - lastSensorSteps!!
+        if (delta > 0) {
+            runSteps += delta
+            hatchProgressSteps = (hatchProgressSteps + delta).coerceAtMost(hatchGoal)
+            checkHatchCondition()
+        }
+
+        lastSensorSteps = totalSteps
+    }
+
+    //-------------------------Egg Hatch--------------------------------
+
+    /**
+     * Checks the hatch condition based on the current step count.
+     */
+    private fun checkHatchCondition(overflow: Int = 0) {
+        if (hatchProgressSteps >= hatchGoal) {
+            val totalSteps = (lastSensorSteps ?: 0) + runSteps
+            startEggHatchEvent(totalSteps, overflow)
+        } else {
+            _stepCount.postValue(hatchProgressSteps)
+        }
+    }
+
+    /**
+     * Starts the egg hatch event
+     *
+     * @param totalSteps The total number of steps taken by the user.
+     */
+    private fun startEggHatchEvent(totalSteps: Int, overflow: Int = 0) {
+        viewModelScope.launch {
+            hatchId?.let { id ->
+                val hatched = creatureLogic.hatchCreature(
+                    id,
+                    totalSteps,
+                    hatchProgressSteps,
+                    hatchGoal,
+                    _currentLightLevel.value ?: 0f
+                )
+                if (hatched) {
+                    hatchProgressSteps = overflow
+                    _stepCount.postValue(hatchProgressSteps)
+                    _eggHatched.postValue(true)
+                } else {
+                    _stepCount.postValue(hatchProgressSteps)
+                }
+            }
         }
     }
 
