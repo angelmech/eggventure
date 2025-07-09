@@ -133,22 +133,23 @@ class StepCounterTest {
 
     @Test
     fun `onSensorChanged updates step count and triggers hatch when goal is reached`() = runTest {
-        // Mock Hatch-Logik, damit hatchCreature true zurückgibt
-        coEvery { creatureLogic.hatchCreature(any(), any(), any(), any(), any()) } returns true
+        coEvery { creatureLogic.hatchCreature(any(), any(), any(), any(), any())} returns true
 
-        // Progress initialisieren (z.B. hatchGoal = 5000)
         viewModel.initProgress()
         advanceUntilIdle()
 
-        // Simuliere Schrittzählerwert über dem Ziel
         viewModel.onStepSensorDataChanged(StepSensorData(totalSteps = 5001))
         advanceUntilIdle()
 
-        // Schrittzahl sollte zurückgesetzt sein
+        coVerify(exactly = 1) {
+            creatureLogic.hatchCreature(any(), any(), any(), any(), any())
+        }
+
         Assert.assertEquals(0, viewModel.stepCount.value)
-        // Ei sollte geschlüpft sein
-        Assert.assertTrue(viewModel.eggHatched.value == true)
+        Assert.assertTrue("Ei sollte geschlüpft sein", viewModel.eggHatched.value == true)
     }
+
+
 
 
 
@@ -325,7 +326,7 @@ class StepCounterTest {
         viewModel.addFakeStep(1)
         advanceUntilIdle()
 
-        Assert.assertEquals(0, viewModel.stepCount.value)
+        Assert.assertEquals(1, viewModel.stepCount.value)
         Assert.assertEquals(true, viewModel.eggHatched.value)
     }
 

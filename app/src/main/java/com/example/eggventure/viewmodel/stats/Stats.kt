@@ -37,7 +37,7 @@ class Stats(private val runRepository: RunRepository) : ViewModel() {
 
         viewModelScope.launch {
             _last7Runs.value = runRepository.getLast7Runs()
-            Log.d("StatsViewModel", "Last 7 runs retrieved: ${_last7Runs.value}")
+            //Log.d("StatsViewModel", "Last 7 runs retrieved: ${_last7Runs.value}")
         }
     }
 

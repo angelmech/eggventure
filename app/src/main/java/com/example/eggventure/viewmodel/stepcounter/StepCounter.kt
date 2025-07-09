@@ -75,7 +75,6 @@ class StepCounter(
                 _stepCount.postValue(hatchProgressSteps)
             } catch (e: Exception) {
                 _stepCount.postValue(0)
-                Log.e("StepCounter", "Error initializing progress: ${e.message}")
             }
         }
     }
