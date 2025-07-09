@@ -16,7 +16,7 @@ class CreatureLogicIntegrationTest {
 
     private lateinit var logic: CreatureLogic
     private val hatchEvent = mockk<EggHatchEvent>()
-    private val repo = mockk<CreatureRepository>() // Korrigiert
+    private val repo = mockk<CreatureRepository>()
     private val creatureData = mockk<CreatureDataInterface>()
     private val environmentSensorManager = mockk<EnvironmentSensorManager>()
 

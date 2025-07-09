@@ -21,8 +21,6 @@ import org.junit.rules.TestRule
 
 /**
  * Unit tests for the StepCounter ViewModel.
- *
- * 21/21 passed
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class StepCounterTest {
@@ -99,7 +97,7 @@ class StepCounterTest {
     }
 
     @Test
-    fun `addFakeStep increases step count and updates repo`() = runTest {
+    fun `addFakeStep below hatchGoal updates stepCount`() = runTest {
         val entity = createHatchProgressEntity(1, 0, 5000)
         coEvery { hatchProgressRepository.getLastHatchProgress() } returns entity
         coEvery { hatchProgressRepository.updateHatchProgress(any(), any()) } just Runs
@@ -107,12 +105,13 @@ class StepCounterTest {
         viewModel.initProgress()
         advanceUntilIdle()
 
-        viewModel.addFakeStep(50)
+        viewModel.addFakeStep(4999)
         advanceUntilIdle()
 
-        Assert.assertEquals(50, viewModel.stepCount.value)
-        coVerify { hatchProgressRepository.updateHatchProgress(1, 50) }
+        Assert.assertEquals(4999, viewModel.stepCount.value)
+        viewModel.eggHatched.value?.let { Assert.assertFalse(it) }
     }
+
 
     @Test
     fun `addFakeStep triggers hatch when reaching goal`() = runTest {
@@ -132,10 +131,16 @@ class StepCounterTest {
     }
 
     @Test
-    fun `onSensorChanged updates step count and triggers hatch when goal is reached`() = runTest {
-        coEvery { creatureLogic.hatchCreature(any(), any(), any(), any(), any())} returns true
+    fun `onSensorChanged triggers hatch when goal is reached`() = runTest {
+        coEvery { creatureLogic.hatchCreature(any(), any(), any(), any(), any()) } returns true
+        val entity = createHatchProgressEntity(id = 1, progress = 0, goal = 5000)
+        coEvery { hatchProgressRepository.getLastHatchProgress() } returns entity
+        coEvery { hatchProgressRepository.updateHatchProgress(any(), any()) } just Runs
 
         viewModel.initProgress()
+        advanceUntilIdle()
+
+        viewModel.onStepSensorDataChanged(StepSensorData(totalSteps = 1))
         advanceUntilIdle()
 
         viewModel.onStepSensorDataChanged(StepSensorData(totalSteps = 5001))
@@ -149,14 +154,28 @@ class StepCounterTest {
         Assert.assertTrue("Ei sollte geschlüpft sein", viewModel.eggHatched.value == true)
     }
 
+    @Test
+    fun `addFakeStep triggers hatch at exact goal`() = runTest {
+        val entity = createHatchProgressEntity(1, 4990, 5000)
+        coEvery { hatchProgressRepository.getLastHatchProgress() } returns entity
+        coEvery { hatchProgressRepository.updateHatchProgress(any(), any()) } just Runs
+        coEvery { creatureLogic.hatchCreature(any(), any(), any(), any(), any()) } returns true
 
+        viewModel.initProgress()
+        advanceUntilIdle()
 
+        viewModel.addFakeStep(10)
+        advanceUntilIdle()
 
+        coVerify(exactly = 1) { creatureLogic.hatchCreature(any(), any(), any(), any(), any()) }
+        Assert.assertEquals(0, viewModel.stepCount.value)
+        Assert.assertTrue(viewModel.eggHatched.value == true)
+    }
 
     @Test
     fun `startTracking does not register listener again if already tracking`() {
         viewModel.startTracking()
-        viewModel.startTracking() // Second call should not re-register
+        viewModel.startTracking()
 
         verify(exactly = 1) { stepSensorManager.registerListener(any()) }
     }
@@ -171,7 +190,7 @@ class StepCounterTest {
         viewModel.initProgress()
         advanceUntilIdle()
 
-        viewModel.addFakeStep(200) // would exceed goal
+        viewModel.addFakeStep(200)
         advanceUntilIdle()
 
         Assert.assertEquals(5000, viewModel.stepCount.value)
@@ -179,11 +198,8 @@ class StepCounterTest {
 
     @Test
     fun `onSensorChanged ignores non-step-counter events`() {
-        // Da StepSensorData nur totalSteps enthält, simulieren wir hier
-        // einen Wert, der keinen Fortschritt auslöst (z.B. 0 Schritte)
         viewModel.onStepSensorDataChanged(StepSensorData(totalSteps = 0))
 
-        // Erwartung: kein Ei geschlüpft, Schrittzahl bleibt 0 oder unverändert
         Assert.assertEquals(false, viewModel.eggHatched.value)
     }
 
@@ -199,7 +215,7 @@ class StepCounterTest {
         coEvery { hatchProgressRepository.getLastHatchProgress() } returns createHatchProgressEntity(1, 4999, 5000)
         coEvery { hatchProgressRepository.updateHatchProgress(any(), any()) } just Runs
         coEvery { creatureLogic.hatchCreature(any(), any(), any(), any(), eq(0f)) } returns true
-        every { environmentSensorManager.observeLight() } returns flowOf(0f) // Fallback-Wert
+        every { environmentSensorManager.observeLight() } returns flowOf(0f)
 
         val vm = StepCounter(
             stepSensorManager,
@@ -225,17 +241,14 @@ class StepCounterTest {
         viewModel.initProgress()
         advanceUntilIdle()
 
-        Assert.assertEquals(0, viewModel.stepCount.value) // Fallback-Wert
+        Assert.assertEquals(0, viewModel.stepCount.value)
     }
 
     @Test
     fun `addFakeStep does nothing if hatchId is null`() = runTest {
-        // kein initProgress aufgerufen => hatchId ist null
-
         viewModel.addFakeStep(100)
         advanceUntilIdle()
 
-        // Keine Interaktion mit dem Repository
         coVerify(exactly = 0) { hatchProgressRepository.updateHatchProgress(any(), any()) }
         Assert.assertEquals(100, viewModel.stepCount.value)
     }
@@ -245,11 +258,9 @@ class StepCounterTest {
         viewModel.initProgress()
         advanceUntilIdle()
 
-        // Simuliere ersten Sensorwert
         viewModel.onStepSensorDataChanged(StepSensorData(3000))
         val previous = viewModel.stepCount.getOrAwaitValue()
 
-        // Simuliere exakt denselben Sensorwert
         viewModel.onStepSensorDataChanged(StepSensorData(3000))
         val after = viewModel.stepCount.getOrAwaitValue()
 
@@ -259,17 +270,13 @@ class StepCounterTest {
 
     @Test
     fun `onSensorChanged with lower totalSteps than initial handles correctly`() = runTest {
-        // Progress initialisieren (setzt z.B. hatchProgressSteps auf 0)
         viewModel.initProgress()
         advanceUntilIdle()
 
-        // Erste Initialisierung – setzt initialTotalSteps intern
         viewModel.onStepSensorDataChanged(StepSensorData(totalSteps = 100))
 
-        // Jetzt simulieren wir ein niedrigeres totalSteps – sollte keinen Crash verursachen
         viewModel.onStepSensorDataChanged(StepSensorData(totalSteps = 50))
 
-        // Sicherstellen, dass der Schrittzähler nicht negativ ist
         val currentStepCount = viewModel.stepCount.getOrAwaitValue()
         Assert.assertTrue(currentStepCount >= 0)
     }
@@ -283,12 +290,11 @@ class StepCounterTest {
 
     @Test
     fun `stopTracking can be called even if not tracking`() = runTest {
-        // isTracking == false
         viewModel.stopTracking()
         advanceUntilIdle()
 
-        verify { stepSensorManager.unregisterListener() } // sollte trotzdem passieren
-        coVerify { runPersistence.saveRun(any(), any(), any()) }        // Run wird gespeichert
+        verify { stepSensorManager.unregisterListener() }
+        coVerify { runPersistence.saveRun(any(), any(), any()) }
     }
 
     @Test
@@ -303,7 +309,6 @@ class StepCounterTest {
         viewModel.addFakeStep(-50)
         advanceUntilIdle()
 
-        // FakeSteps summieren sich, auch negativ – aber StepCount sollte nie negativ angezeigt werden
         Assert.assertEquals(50, viewModel.stepCount.value)
     }
 

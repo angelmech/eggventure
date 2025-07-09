@@ -73,4 +73,37 @@ class CreatureSortTest {
         sortManager.resetSort()
         Assert.assertEquals(CreatureSortMode.DEFAULT, sortManager.sortMode.value)
     }
+
+    @Test
+    fun `toggleNameSort toggles between BY_NAME and DEFAULT`() {
+        sortManager.toggleNameSort()
+        Assert.assertEquals(CreatureSortMode.BY_NAME, sortManager.sortMode.value)
+        sortManager.toggleNameSort()
+        Assert.assertEquals(CreatureSortMode.DEFAULT, sortManager.sortMode.value)
+    }
+
+    @Test
+    fun `sort sorts by name when in BY_NAME mode`() {
+        sortManager.toggleNameSort()
+        val sorted = sortManager.sort(creatures)
+        val expected = creatures.sortedBy { it.creatureName }
+        Assert.assertEquals(expected, sorted)
+    }
+
+    @Test
+    fun `toggleTypeSort toggles between BY_TYPE and DEFAULT`() {
+        sortManager.toggleTypeSort()
+        Assert.assertEquals(CreatureSortMode.BY_TYPE, sortManager.sortMode.value)
+        sortManager.toggleTypeSort()
+        Assert.assertEquals(CreatureSortMode.DEFAULT, sortManager.sortMode.value)
+    }
+
+    @Test
+    fun `sort sorts by type when in BY_TYPE mode`() {
+        sortManager.toggleTypeSort()
+        val sorted = sortManager.sort(creatures)
+        val expected = creatures.sortedBy { it.type.name }
+        Assert.assertEquals(expected, sorted)
+    }
+
 }

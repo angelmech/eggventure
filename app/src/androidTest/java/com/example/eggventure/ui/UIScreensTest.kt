@@ -40,21 +40,17 @@ class UIScreensTest {
 
     @Test
     fun stepProgress_displaysCorrectSteps() {
-        // Start tracking
         composeTestRule.onNodeWithText("Lauf Starten").performClick()
 
-        // Simulate steps
         composeTestRule.onNodeWithText("Schritte simulieren")
             .assertIsDisplayed()
             .performClick()
 
-        // Wait for any " / 5000 Schritte" text to appear
         composeTestRule.waitUntil(timeoutMillis = 5_000) {
             composeTestRule.onAllNodesWithText("/ 5000", substring = true)
                 .fetchSemanticsNodes().isNotEmpty()
         }
 
-        // Check the step progress is shown
         composeTestRule.onNodeWithText("/ 5000", substring = true)
             .assertExists()
             .assertIsDisplayed()
@@ -105,14 +101,11 @@ class UIScreensTest {
         ).assertIsDisplayed()
     }
 
-
-
     @Test
     fun progressBar_updatesOnStepIncrease() {
-        // Start the run
         composeTestRule.onNodeWithText("Lauf Starten").performClick()
 
-        // Wait for the initial progress text to appear
+        // wait for ui
         composeTestRule.waitUntil(timeoutMillis = 5_000) {
             composeTestRule.onAllNodesWithText("0 / 5000", substring = true)
                 .fetchSemanticsNodes().isNotEmpty()
@@ -121,12 +114,10 @@ class UIScreensTest {
         composeTestRule.onNodeWithText("0 / 5000", substring = true)
             .assertIsDisplayed()
 
-        // Simulate step increase
         composeTestRule.onNodeWithText("Schritte simulieren")
             .assertIsDisplayed()
             .performClick()
 
-        // Wait for the updated step count to appear
         composeTestRule.waitUntil(timeoutMillis = 5_000) {
             composeTestRule.onAllNodesWithText("523 / 5000", substring = true)
                 .fetchSemanticsNodes().isNotEmpty()
@@ -135,9 +126,4 @@ class UIScreensTest {
         composeTestRule.onNodeWithText("523 / 5000", substring = true)
             .assertIsDisplayed()
     }
-
-
-
-
-
 }
