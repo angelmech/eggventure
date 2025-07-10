@@ -18,6 +18,7 @@ import com.example.eggventure.viewmodel.creaturelogic.CreatureLogic
 import com.example.eggventure.viewmodel.creaturelogic.CreatureLogicInterface
 import com.example.eggventure.viewmodel.creaturelogic.EggHatchEvent
 import com.example.eggventure.viewmodel.stats.Stats
+import com.example.eggventure.viewmodel.stats.StatsInterface
 import com.example.eggventure.viewmodel.stepcounter.RunPersistence
 import com.example.eggventure.viewmodel.stepcounter.StepCounter
 import com.example.eggventure.viewmodel.stepcounter.StepCounterInterface
@@ -92,7 +93,7 @@ object DependencyProvider {
         )
     }
 
-    fun provideStats(context: Context): Stats { //TODO MOVE TO INTERFACE ::)
+    fun provideStats(context: Context): StatsInterface {
         return Stats(provideRunRepository(context))
     }
 }

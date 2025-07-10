@@ -38,7 +38,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.eggventure.model.run.RunEntity
 import androidx.compose.runtime.getValue
@@ -53,6 +52,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.example.eggventure.viewmodel.stats.StatsInterface
 import kotlinx.coroutines.launch
 
 //MPAndroidChart
@@ -68,7 +68,7 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 @Composable
 fun StatsScreen(navController: NavHostController) {
     val context = LocalContext.current
-    val stats: Stats = viewModel(factory = StatsFactory(context))
+    val stats: StatsInterface = viewModel<Stats>(factory = StatsFactory(context))
     val allRuns = stats.allRuns.collectAsState()
 
     val listState = rememberLazyListState()
@@ -170,7 +170,7 @@ fun StatsScreen(navController: NavHostController) {
 }
 
 @Composable
-fun LastSevenRunsChart(last7Runs: List<RunEntity>, statsViewModel: Stats) {
+fun LastSevenRunsChart(last7Runs: List<RunEntity>, statsViewModel: StatsInterface) {
     if (last7Runs.isNotEmpty()) {
         val entries = ArrayList<BarEntry>()
         val labels = ArrayList<String>()
@@ -257,7 +257,7 @@ fun SectionDivider(text: String) {
 
 
 @Composable
-fun RunListItem(run: RunEntity, statsViewModel: Stats) {
+fun RunListItem(run: RunEntity, statsViewModel: StatsInterface) {
     Card(
         modifier = Modifier
             .fillMaxWidth()

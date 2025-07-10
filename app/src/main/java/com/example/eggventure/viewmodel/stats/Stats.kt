@@ -14,16 +14,16 @@ import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 
-class Stats(private val runRepository: RunRepository) : ViewModel() {
+class Stats(private val runRepository: RunRepository) : ViewModel(), StatsInterface {
 
     private val _allRuns = MutableStateFlow<List<RunEntity>>(emptyList())
-    val allRuns: StateFlow<List<RunEntity>> = _allRuns
+    override val allRuns: StateFlow<List<RunEntity>> = _allRuns
 
     private val _lastRun = MutableStateFlow<RunEntity?>(null)
-    val lastRun: StateFlow<RunEntity?> = _lastRun
+    override val lastRun: StateFlow<RunEntity?> = _lastRun
 
     private val _last7Runs = MutableStateFlow<List<RunEntity>>(emptyList())
-    val last7Runs: StateFlow<List<RunEntity>> = _last7Runs
+    override val last7Runs: StateFlow<List<RunEntity>> = _last7Runs
 
     init {
         viewModelScope.launch {
@@ -42,7 +42,7 @@ class Stats(private val runRepository: RunRepository) : ViewModel() {
     }
 
     // Formatiert die Dauer zu hh:mm:ss
-    fun formatDuration(durationMillis: Long): String {
+    override fun formatDuration(durationMillis: Long): String {
         val hours = TimeUnit.MILLISECONDS.toHours(durationMillis)
         val minutes = TimeUnit.MILLISECONDS.toMinutes(durationMillis) % 60
         val seconds = TimeUnit.MILLISECONDS.toSeconds(durationMillis) % 60
@@ -50,7 +50,7 @@ class Stats(private val runRepository: RunRepository) : ViewModel() {
     }
 
     // Formatiert den Timestamp in ein lesbares Datum
-    fun formatDate(timestamp: Long, dateOnly: Boolean = false): String {
+    override fun formatDate(timestamp: Long, dateOnly: Boolean): String {
         if (dateOnly) {
             val sdf = SimpleDateFormat("dd.MM", Locale.getDefault())
             return sdf.format(Date(timestamp))
