@@ -27,5 +27,5 @@ interface RunRepository {
      */
     suspend fun getLastRun(): RunEntity?
 
-    suspend fun getLast7Runs(): List<RunEntity>
+    fun getLast7Runs(): Flow<List<RunEntity>>
 }

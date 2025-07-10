@@ -23,7 +23,7 @@ class RunRepositoryImpl(private val runDao: RunDao) : RunRepository {
         return lastRun
     }
 
-    override suspend fun getLast7Runs(): List<RunEntity> {
+    override fun getLast7Runs(): Flow<List<RunEntity>> {
         val last7Runs = runDao.getLast7Runs()
         Log.d("RunRepository", "Last 7 runs retrieved: $last7Runs")
         return last7Runs
