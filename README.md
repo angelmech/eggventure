@@ -9,4 +9,4 @@ Eggventure kombiniert einen klassischen Lauftracker mit Videospiel-Elementen, um
 
 ## Dokumentation
 
-[Klick hier] (Technical White Paper.pdf)
+[Klick hier](Technical White Paper.pdf)
