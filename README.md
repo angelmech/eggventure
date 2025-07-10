@@ -6,3 +6,7 @@ Eggventure kombiniert einen klassischen Lauftracker mit Videospiel-Elementen, um
 
 - Angel Mechkarov, 586684
 - Kerem Gürbüz, 587049
+
+## Dokumentation
+
+[Klick hier] (Technical White Paper.pdf)
