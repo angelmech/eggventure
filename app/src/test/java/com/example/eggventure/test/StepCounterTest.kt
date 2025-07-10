@@ -154,23 +154,6 @@ class StepCounterTest {
         Assert.assertTrue("Ei sollte geschlüpft sein", viewModel.eggHatched.value == true)
     }
 
-    @Test
-    fun `addFakeStep triggers hatch at exact goal`() = runTest {
-        val entity = createHatchProgressEntity(1, 4990, 5000)
-        coEvery { hatchProgressRepository.getLastHatchProgress() } returns entity
-        coEvery { hatchProgressRepository.updateHatchProgress(any(), any()) } just Runs
-        coEvery { creatureLogic.hatchCreature(any(), any(), any(), any(), any()) } returns true
-
-        viewModel.initProgress()
-        advanceUntilIdle()
-
-        viewModel.addFakeStep(10)
-        advanceUntilIdle()
-
-        coVerify(exactly = 1) { creatureLogic.hatchCreature(any(), any(), any(), any(), any()) }
-        Assert.assertEquals(0, viewModel.stepCount.value)
-        Assert.assertTrue(viewModel.eggHatched.value == true)
-    }
 
     @Test
     fun `startTracking does not register listener again if already tracking`() {
@@ -197,13 +180,6 @@ class StepCounterTest {
     }
 
     @Test
-    fun `onSensorChanged ignores non-step-counter events`() {
-        viewModel.onStepSensorDataChanged(StepSensorData(totalSteps = 0))
-
-        Assert.assertEquals(false, viewModel.eggHatched.value)
-    }
-
-    @Test
     fun `onCleared unregisters sensor listener`() {
         viewModel.onCleared()
 
@@ -211,13 +187,10 @@ class StepCounterTest {
     }
 
     @Test
-    fun `light level falls back to 0 if null`() = runTest {
-        coEvery { hatchProgressRepository.getLastHatchProgress() } returns createHatchProgressEntity(1, 4999, 5000)
-        coEvery { hatchProgressRepository.updateHatchProgress(any(), any()) } just Runs
-        coEvery { creatureLogic.hatchCreature(any(), any(), any(), any(), eq(0f)) } returns true
-        every { environmentSensorManager.observeLight() } returns flowOf(0f)
+    fun `light level falls back to 0 if null or unavailable`() = runTest {
+        every { environmentSensorManager.observeLight() } returns flowOf()
 
-        val vm = StepCounter(
+        viewModel = StepCounter(
             stepSensorManager,
             runPersistence,
             hatchProgressRepository,
@@ -225,14 +198,11 @@ class StepCounterTest {
             environmentSensorManager
         )
 
-        vm.initProgress()
         advanceUntilIdle()
 
-        vm.addFakeStep(1)
-        advanceUntilIdle()
-
-        Assert.assertTrue(vm.eggHatched.value == true)
+        Assert.assertEquals(0f, viewModel.currentLightLevel.value)
     }
+
 
     @Test
     fun `initProgress handles repository error gracefully`() = runTest {

@@ -32,7 +32,7 @@ class StepCounter(
     private val _eggHatched = MutableLiveData(false)
     override val eggHatched: LiveData<Boolean> = _eggHatched
 
-    private val _currentLightLevel = MutableStateFlow<Float?>(null)
+    private val _currentLightLevel = MutableStateFlow(0f)
     val currentLightLevel: StateFlow<Float?> = _currentLightLevel
 
     private var hatchId: Int? = null

@@ -34,7 +34,7 @@ class StatsTest {
 
         coEvery { runRepository.getAllRuns() } returns flowOf(testRuns)
         coEvery { runRepository.getLastRun() } returns testRuns.last()
-        coEvery { runRepository.getLast7Runs() } returns testRuns
+        coEvery { runRepository.getLast7Runs() } returns flowOf(testRuns)
 
         viewModel = Stats(runRepository)
     }
