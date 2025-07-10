@@ -27,5 +27,10 @@ interface RunRepository {
      */
     suspend fun getLastRun(): RunEntity?
 
+    /**
+     * Retrieves the last 7 runs from the data source as a Flow.
+     *
+     * @return A Flow emitting a list of the last 7 [RunEntity] objects.
+     */
     fun getLast7Runs(): Flow<List<RunEntity>>
 }
