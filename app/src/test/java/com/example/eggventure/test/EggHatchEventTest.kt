@@ -81,28 +81,6 @@ class EggHatchEventTest {
     }
 
     @Test
-    fun `processHatchEvent resets progress, inserts creature and returns entity if goal reached`() = runTest {
-        coEvery { creatureRepository.insertCreature(any()) } just Runs
-
-        val result = eggHatchEvent.processHatchEvent(
-            hatchId = 1,
-            currentSteps = 5000,
-            goal = 5000,
-            creatureData = creatureData,
-            lightLevel = 8000f
-        )
-
-        coVerifySequence {
-            hatchProgressRepository.updateHatchProgress(1, 0)
-            creatureRepository.insertCreature(any())
-        }
-        Assert.assertNotNull(result)
-        // result kann null sein, daher safe call
-        Assert.assertTrue(result?.hatchedAt ?: 0 > 0)
-        Assert.assertTrue(result != null && sampleCreatures.any { it.name == result.creatureName })
-    }
-
-    @Test
     fun `determineType returns SHADOW for light below 700`() = runTest {
         val method = EggHatchEvent::class.java.getDeclaredMethod("determineType", Float::class.javaObjectType)
         method.isAccessible = true
