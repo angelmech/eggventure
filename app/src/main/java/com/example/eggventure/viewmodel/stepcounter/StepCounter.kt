@@ -56,6 +56,8 @@ class StepCounter(
     override fun initProgress() {
         viewModelScope.launch {
             try {
+                if (hatchId != null) return@launch
+
                 val lastProgress = hatchProgressRepository.getLastHatchProgress()
                 if (lastProgress != null) {
                     hatchId = lastProgress.id
@@ -72,12 +74,14 @@ class StepCounter(
                     hatchProgressSteps = fresh?.hatchProgressSteps ?: 0
                     hatchGoal = fresh?.hatchGoal ?: hatchGoal
                 }
+
                 _stepCount.postValue(hatchProgressSteps)
             } catch (e: Exception) {
                 _stepCount.postValue(0)
             }
         }
     }
+
 
     override fun startTracking() {
         if (_isTracking.value == true) return
@@ -114,7 +118,6 @@ class StepCounter(
             overflow = hatchProgressSteps - hatchGoal
             hatchProgressSteps = hatchGoal
         }
-
         checkHatchCondition(overflow)
     }
 
